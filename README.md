@@ -4,7 +4,7 @@
 
 *For now it's named as above, because I have no better idea how to name it. Here are some words about it.*
 
-## What it the program about?
+## What is the program about?
 Python Password is intended to safely store passwords.
 ##### Current version 0.1 (Alpha)
 
