@@ -4,6 +4,7 @@ import os
 import random
 import sqlite3
 import string
+import sys
 from getpass import getpass
 
 import pyperclip
@@ -67,7 +68,7 @@ def show_records(records=None):
     if records is None:
         records = query('SELECT `name` FROM `passwords`;')
 
-    if records is None:
+    if not records:
         print('Nothing to show!')
 
     else:
@@ -81,10 +82,10 @@ def check_files():
 
     # Settings file
     try:
-        from PyPassword import settings
-    except ImportError:
+        open(file('salt.key'), 'rb')
+    except FileNotFoundError:
         print('Settings file not found! Creating one...')
-        open(file('settings.py'), 'x')
+        open(file('salt.key'), 'x')
 
         custom_salt = input(
             'Provide custom salt or leave empty for random (it should be super secret and super safe): ')
@@ -92,10 +93,10 @@ def check_files():
             custom_salt = os.urandom(16)
 
         else:
-            custom_salt = "b'" + custom_salt + "'"
+            custom_salt.encode()
 
-        with open(file('settings.py'), 'w') as f:
-            f.write(f"# -*- coding: utf-8 -*-\nsalt = {custom_salt}\n")
+        with open(file('salt.key'), 'wb') as f:
+            f.write(custom_salt)
     finally:
         print('Settings OK!')
 
@@ -168,20 +169,21 @@ def generate_key():
     password = password_input.encode()
 
     try:
-        from PyPassword import settings
+        open(file('salt.key'), 'rb')
 
-    except ImportError:
+    except FileNotFoundError:
         print('No settings are found! Please restart the program, so it could create them for you')
         confirm()
 
     else:
-        kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=settings.salt,
-            iterations=100000,
-            backend=default_backend()
-        )
+        with open(file('salt.key'), 'rb') as f:
+            kdf = PBKDF2HMAC(
+                algorithm=hashes.SHA256(),
+                length=32,
+                salt=f.read(),
+                iterations=100000,
+                backend=default_backend()
+            )
 
         key = base64.urlsafe_b64encode(kdf.derive(password))
 
@@ -189,7 +191,7 @@ def generate_key():
             with open(file('master.key'), 'wb') as f:
                 f.write(key)
         except FileNotFoundError:
-            print('File removed! Please do not remove it')
+            print('File removed! Please do not remove it!')
         else:
             print('Key file generated')
 
@@ -250,25 +252,23 @@ def del_password():
     show_records()
 
     password_input = input('>>> ')
-    to_del = query('SELECT `password` FROM `passwords` WHERE `name` LIKE ?;', [password_input])[0][0]
-    if (n := type(to_del)) is not None:
-        if n is bytes:
-            del_confirm = input('If you want to proceed, please type once more password name: ')
+    if password_input != '':
+        to_del = query('SELECT `password` FROM `passwords` WHERE `name` LIKE ?;', [password_input])[0][0]
+        if (n := type(to_del)) is not None:
+            if n is bytes:
+                del_confirm = input('If you want to proceed, please type once more password name: ')
 
-            with open(file('master.key'), 'rb') as f:
-                key = f.read()
-                f = Fernet(key)
-                to_del = f.encrypt(to_del).decode('utf-8')
+                if password_input == del_confirm:
+                    query('DELETE FROM `passwords` WHERE `name` LIKE ?;', [password_input])
 
-            if to_del == del_confirm:
-                query('DELETE FROM `passwords` WHERE `name` LIKE ?;', [to_del])
-
+                else:
+                    print('Action cancelled')
             else:
-                print('Action cancelled')
+                raise SyntaxError('Bad password type, that\'s an error')
         else:
-            raise SyntaxError('Bad password type, that\'s an error')
+            raise KeyError('That password does not exits')
     else:
-        raise KeyError('That password does not exits')
+        print('Action cancelled')
 
 
 # Option 5
@@ -321,7 +321,9 @@ if __name__ == '__main__':
             quick_start()
 
         elif choice in ('0', 'E', 'e'):
+            clear()
             print(f' * Thanks for using {Program.name}! *')
-            exit()
+            confirm()
+            sys.exit()
 
         confirm()
