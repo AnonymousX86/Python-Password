@@ -35,7 +35,7 @@ safely copied to clipboard.
    5. **Info** - useful links and info about the program.
    6. **Exit** - I think I don't have to describe it.
    
-3. Program is working in loop, so it will continue working unless you will close the windows or select `Exit` option.
+3. Program is working in loop, so it will continue working unless you will close the window or select `Exit` option.
 
 For download please look at [releases section](https://github.com/AnonymousX86/Python-Password/releases).
 
