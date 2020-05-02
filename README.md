@@ -37,6 +37,9 @@ safely copied to clipboard.
    
 3. Program is working in loop, so it will continue working unless you will close the windows or select `Exit` option.
 
-If you want to help me improve this program, please contact me via Discord: `Anonymous©#7296`, or this repo's issues.
+For download please look at [releases section](https://github.com/AnonymousX86/Python-Password/releases).
+
+If you want to help me improve this program, (report issues etc.) please contact me via Discord: `Anonymous©#7296`,
+or use [GitHub issues](https://github.com/AnonymousX86/Python-Password/issues).
 
 ### Thanks for all of your help!
