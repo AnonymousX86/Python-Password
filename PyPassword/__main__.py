@@ -87,7 +87,7 @@ def check_files():
         open(file('settings.py'), 'x')
 
         custom_salt = input(
-            'Provide custom salt or leave empty for random (it should be super secret adn super safe): ')
+            'Provide custom salt or leave empty for random (it should be super secret and super safe): ')
         if custom_salt == '':
             custom_salt = os.urandom(16)
 
