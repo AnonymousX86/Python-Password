@@ -9,10 +9,10 @@ Python Password is intended to safely store passwords.
 ##### Current version 0.1 (Alpha)
 
 ## How does it work?
-At first launch program is creating local database (SQLite database). Of course program is searching for file
-every time it's opened In that database passwords will be stored and `master.key` file, where's stored key
-used to encrypt end decrypt passwords. That `.key` file is generated based on user password and random
-ASCII symbol or also user input so you can replicate the key with 2 simple inputs.
+Program is saving passwords to local database (SQLite database). Passwords are encrypted with a secret key, based
+on master password and salt, both could be a user input (or only the first one) so you can re-create the file
+when it's gone for some reasons. When you would like to get any password it won't be prompted on the screen, but
+safely copied to clipboard.
 
 ## Quick start guide
 1. At very first launch, program will create 3 files:
@@ -37,6 +37,6 @@ ASCII symbol or also user input so you can replicate the key with 2 simple input
    
 3. Program is working in loop, so it will continue working unless you will close the windows or select `Exit` option.
 
-oIf you want to help me improve this program, please contact me via Discord: `Anonymous©#7296`, or this repo's issues.
+If you want to help me improve this program, please contact me via Discord: `Anonymous©#7296`, or this repo's issues.
 
 ### Thanks for all of your help!
