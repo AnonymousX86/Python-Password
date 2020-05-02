@@ -1,0 +1,17 @@
+# Cache
+__pycache__
+
+# IDE folder
+.idea
+
+# Virtual env
+venv
+
+# Builds' folders
+dist
+build
+
+# Files that are generated specified per user
+*.key
+*.db
+settings.py
