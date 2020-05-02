@@ -7,11 +7,18 @@ __pycache__
 # Virtual env
 venv
 
+# Files used to make a build
+src
+
 # Builds' folders
 dist
 build
+*.spec
 
 # Files that are generated specified per user
 *.key
 *.db
 settings.py
+
+# Scripts
+*.bat
