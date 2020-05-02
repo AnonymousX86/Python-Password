@@ -35,6 +35,7 @@ class Program:
     version = '0.1'  # Alpha
     author = 'Jakub S.'
     git_hub = 'https://github.com/AnonymousX86/Python-Password'
+    icon = 'Icon made by Freepik from www.flaticon.com'
 
 
 def header():
@@ -276,7 +277,8 @@ def quick_start():
     print(f'Program name:    {Program.name}\n'
           f'Current version: {Program.version}\n'
           f'Author:          {Program.author}\n'
-          f'GitHub:          {Program.git_hub}')
+          f'GitHub:          {Program.git_hub}\n'
+          f'Icon:            {Program.icon}')
 
 
 if __name__ == '__main__':
