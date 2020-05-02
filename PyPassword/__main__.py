@@ -91,8 +91,11 @@ def check_files():
         if custom_salt == '':
             custom_salt = os.urandom(16)
 
+        else:
+            custom_salt = "b'" + custom_salt + "'"
+
         with open(file('settings.py'), 'w') as f:
-            f.write(f"# -*- coding: utf-8 -*-\nsalt = b'{custom_salt}'\n")
+            f.write(f"# -*- coding: utf-8 -*-\nsalt = {custom_salt}\n")
     finally:
         print('Settings OK!')
 
