@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Simple Python console app for storing passwords."""
 import base64
 import os
 import random
@@ -15,6 +16,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
 class Color:
+    """Python specified values used for text formatting"""
     # Sources:
     # https://stackoverflow.com/questions/8924173/how-do-i-print-bold-text-in-python
     # http://ascii-table.com/ansi-escape-sequences.php
@@ -31,6 +33,7 @@ class Color:
 
 
 class Program:
+    """Infos about the program"""
     name = 'Python Password'  # Work in progress
     version = '0.1'  # Alpha
     author = 'Jakub S.'
@@ -39,6 +42,10 @@ class Program:
 
 
 def header():
+    """
+    Shows welcome text
+    :return: Formatted text
+    """
     foo = ''
     for i in range(len(Program.name) + len(Program.version) + 10):
         foo += '-'
@@ -61,11 +68,12 @@ def clear():
 
 
 def confirm():
+    """Prints confirmation and waits for ENTER"""
     input('\n---\n\nPress ENTER to continue...')
 
 
 def show_records(records=None):
-    # Default query - passwords' names
+    """Shows specified values from database, for default passwords' names"""
     if records is None:
         records = query('SELECT `name` FROM `passwords`;')
 
@@ -115,7 +123,7 @@ def check_files():
 
     # ``key`` file
     try:
-        open(file('master.key'), 'r')
+        open(file('master.key'))
     except FileNotFoundError:
         print('Key file not found! Creating one...')
         generate_key()
@@ -166,6 +174,7 @@ def rand_password(length: int = 16):
 
 # Option 1
 def generate_key():
+    """Generates salt.key file based on user input"""
     password_input = input('Provide master password: ')
     password = password_input.encode()
 
@@ -199,6 +208,7 @@ def generate_key():
 
 # Option 2
 def get_password():
+    """Decrypts password from database and saves it to clipboard"""
     print('Available passwords:\n')
     show_records()
 
@@ -229,6 +239,7 @@ def get_password():
 
 # Option 3
 def set_password():
+    """Saves encrypted and salted password to database"""
     password_name = input('Provide password name (visible): ')
     password_value = getpass('Provide password value (or leave empty for random): ')
 
@@ -249,6 +260,7 @@ def set_password():
 
 # Option 4
 def del_password():
+    """Deletes password from database, require confirmation"""
     print('Available passwords:\n')
     show_records()
 
@@ -274,6 +286,7 @@ def del_password():
 
 # Option 5
 def quick_start():
+    """Shows general info about the program"""
     print(f'Program name:    {Program.name}\n'
           f'Current version: {Program.version}\n'
           f'Author:          {Program.author}\n'
