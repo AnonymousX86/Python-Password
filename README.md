@@ -17,7 +17,7 @@ safely copied to clipboard.
 ## Quick start guide
 1. At very first launch, program will create 3 files:
 
-   - `settings.py`,
+   - `salt.key`,
    - `master.key`,
    - `passwords.db`.
    
