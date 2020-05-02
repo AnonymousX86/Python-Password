@@ -37,6 +37,7 @@ safely copied to clipboard.
    
 3. Program is working in loop, so it will continue working unless you will close the window or select `Exit` option.
 
+## How to start using?
 For download please look at [releases section](https://github.com/AnonymousX86/Python-Password/releases).
 
 If you want to help me improve this program, (report issues etc.) please contact me via Discord: `Anonymous©#7296`,
