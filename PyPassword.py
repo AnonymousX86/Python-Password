@@ -20,10 +20,11 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 class Color:
     """
     Python specified values used for text formatting.
+
+    Sources:
+        https://stackoverflow.com/questions/8924173/how-do-i-print-bold-text-in-python
+        http://ascii-table.com/ansi-escape-sequences.php
     """
-    # Sources:
-    # https://stackoverflow.com/questions/8924173/how-do-i-print-bold-text-in-python
-    # http://ascii-table.com/ansi-escape-sequences.php
     # PURPLE = '\033[95m'
     # CYAN = '\033[96m'
     # DARKCYAN = '\033[36m'
@@ -32,6 +33,7 @@ class Color:
     # YELLOW = '\033[93m'
     # RED = '\033[91m'
     # BOLD = '\033[1m'
+    # Above values are not in use (yet)
     UNDERLINE = '\033[4m'
     END = '\033[0m'
 
@@ -40,16 +42,17 @@ class Program:
     """
     Infos about the program.
     """
-    name = 'Python Password'  # Work in progress
-    version = '0.1.1'  # Alpha
+    name = 'Python Password'
+    version = '0.1.2'
     author = 'Jakub S.'
     git_hub = 'https://github.com/AnonymousX86/Python-Password'
     icon = 'Icon made by Freepik from www.flaticon.com'
+    rd_party = '  - UPX'
 
 
 class File:
     """
-    Names for program files.
+    Names for program's files.
     """
     alpha_key = 'Alpha.key'
     beta_key = 'Beta.key'
@@ -61,15 +64,15 @@ def header():
     Shows welcome text.
     :return: Formatted text.
     """
-    foo = ''
+    h_text = ' '
     for i in range(len(Program.name) + len(Program.version) + 10):
-        foo += '-'
-    foo += '\n' + \
-           f'+++ {Program.name} v{Program.version} +++\n'
+        h_text += '-'
+    h_text += '\n' + \
+              f' +++ {Program.name} v{Program.version} +++\n '
     for i in range(len(Program.name) + len(Program.version) + 10):
-        foo += '-'
-    foo += '\n'
-    return foo
+        h_text += '-'
+    h_text += '\n'
+    return h_text
 
 
 def mark(txt: str):
@@ -92,7 +95,7 @@ def confirm():
     """
     Prints confirmation and waits for ENTER to be pressed.
     """
-    input('\n---\n\nPress ENTER to continue...')
+    input('\n ---\n\n Press ENTER to continue...')
 
 
 def show_records(records=None):
@@ -104,11 +107,11 @@ def show_records(records=None):
         records = query('SELECT `name` FROM `passwords`;')
 
     if not records:
-        print('Nothing to show!')
+        print(' Nothing to show!\n')
 
     else:
         for record in records:
-            print(f'- {record[0]}\n')
+            print(f' - {record[0]}\n')
 
 
 def missing_file(file_name: str):
@@ -116,9 +119,9 @@ def missing_file(file_name: str):
     Shows info about missing file.
     :param file_name: Name of missing file.
     """
-    print(f'{file_name} file has removed while processing!\n'
-          f'This file is needed for proper working.\n'
-          f'Restart program to create one.')
+    print(f' {file_name} file has removed while processing!\n'
+          f' This file is needed for proper working.\n'
+          f' Restart program to create one.')
     confirm()
 
 
@@ -127,34 +130,34 @@ def check_files():
     Checking if all files exists.
     Missing files are being created.
     """
-    print('Checking files integrity...')
+    print(' Checking files integrity...')
 
     # Salt (beta password)
     try:
         open(file(File.beta_key))
     except FileNotFoundError:
-        print('Beta password file not found! Creating one...')
+        print(' Beta password file not found! Creating one...')
         generate_salt()
     else:
-        print(f'{File.beta_key} OK!')
+        print(f' {File.beta_key} OK!')
 
     # SQLite database
     try:
         open(file(File.sqlite))
     except FileNotFoundError:
-        print('Passwords database not found! Creating one...')
+        print(' Passwords database not found! Creating one...')
         generate_sqlite()
     else:
-        print(f'{File.sqlite} OK!')
+        print(f' {File.sqlite} OK!')
 
     # Master password (alpha password)
     try:
         open(file(File.alpha_key))
     except FileNotFoundError:
-        print('Alpha password file not found! Creating one...')
+        print(' Alpha password file not found! Creating one...')
         generate_master_key()
     else:
-        print(f'{File.alpha_key} OK!')
+        print(f' {File.alpha_key} OK!')
 
 
 def file(filename: str):
@@ -175,14 +178,20 @@ def query(q_input: str, q_args=None):
     """
     if q_args is None:
         q_args = []
-    conn = sqlite3.connect(file(File.sqlite))
-    my_cursor = conn.cursor()
-    my_cursor.execute(q_input, q_args)
-    records = my_cursor.fetchall()
-    conn.commit()
-    my_cursor.close()
-    conn.close()
-    return records
+    try:
+        open(file(File.sqlite))
+    except FileNotFoundError:
+        missing_file(File.sqlite)
+        raise FileNotFoundError
+    else:
+        conn = sqlite3.connect(file(File.sqlite))
+        my_cursor = conn.cursor()
+        my_cursor.execute(q_input, q_args)
+        records = my_cursor.fetchall()
+        conn.commit()
+        my_cursor.close()
+        conn.close()
+        return records
 
 
 def rand_password(length: int = 16):
@@ -205,7 +214,7 @@ def generate_sqlite():
     try:
         open(file(File.sqlite), 'x')
     except FileExistsError:
-        print(f'Database already exists! Please remove it manually ({File.sqlite} file) and restart {Program.name}')
+        print(f' Database already exists! Please remove it manually ({File.sqlite} file) and restart {Program.name}')
     else:
         query('''create table passwords(id INTEGER constraint passwords_pk primary key autoincrement, name varchar not
                  null, password varchar not null );''')
@@ -223,19 +232,19 @@ def generate_salt():
         pass
     finally:
         custom_salt = getpass(
-            'Provide custom beta password or leave empty for random (it should be super secret and super safe): ')
+            ' Provide custom beta password or leave empty for random (it should be super secret and super safe): ')
         if custom_salt == '':
             custom_salt = os.urandom(16)
         else:
             while True:
-                salt_confirm = getpass('Confirm password: ')
+                salt_confirm = getpass(' Confirm password: ')
                 if salt_confirm == custom_salt:
                     break
                 elif salt_confirm in ('c', 'cancel'):
-                    print('Action cancelled!')
+                    print(' Action cancelled!')
                     return
                 else:
-                    print('Passwords do not match')
+                    print(' Passwords do not match')
             custom_salt.encode()
         try:
             with open(file(File.beta_key), 'wb') as f:
@@ -243,7 +252,7 @@ def generate_salt():
         except FileNotFoundError:
             missing_file(File.beta_key)
         else:
-            print('Beta password created successfully!')
+            print(' Beta password created successfully!')
 
 
 # Option 1
@@ -257,9 +266,9 @@ def generate_master_key():
         missing_file(File.beta_key)
     else:
         while True:
-            password_input = input('Provide alpha password: ')
+            password_input = input(' Provide alpha password: ')
             if len(password_input) < 6:
-                print('Password should be 6 characters long')
+                print(' Password should be 6 characters long')
             else:
                 break
         password = password_input.encode()
@@ -282,7 +291,7 @@ def generate_master_key():
             except FileNotFoundError:
                 missing_file(File.alpha_key)
             else:
-                print('Alpha key created successfully!')
+                print(' Alpha key created successfully!')
 
 
 # Option 2
@@ -291,32 +300,36 @@ def get_password():
     Decrypts password from database and saves it to clipboard.
     If key is missing or it doesn't match password's source, only warning is showed on the screen.
     """
-    print('Available passwords:\n')
+    print(' Available passwords:\n')
     show_records()
 
-    password_input = input('Choose: ')
+    password_input = input(' Choose: ')
     if password_input.lower() in ('', 'cancel'):
         return
 
     else:
-        to_decrypt = query('SELECT `password` FROM `passwords` WHERE `name` LIKE ?;', [password_input])[0][0]
-        if (n := type(to_decrypt)) is not None:
-            if n is bytes:
-                with open(file(File.alpha_key), 'rb') as f:
-                    key = f.read()
-                    f = Fernet(key)
-
-                    try:
-                        pyperclip.copy(str(f.decrypt(to_decrypt).decode('utf-8')))
-                    except InvalidToken:
-                        print('You do not have permissions to see that password,'
-                              ' please re-generate keys with matching alpha and beta passwords.')
-                    else:
-                        print('Password copied to clipboard!')
-            else:
-                print('Bad password type, that\'s a critical error.')
+        try:
+            to_decrypt = query('SELECT `password` FROM `passwords` WHERE `name` LIKE ?;', [password_input])
+        except FileNotFoundError:
+            pass
         else:
-            print('That password does not exits')
+            if (n := type(to_decrypt)) is not None:
+                to_decrypt = to_decrypt[0][0]
+                if n is bytes:
+                    with open(file(File.alpha_key), 'rb') as f:
+                        key = f.read()
+                        f = Fernet(key)
+                        try:
+                            pyperclip.copy(str(f.decrypt(to_decrypt).decode('utf-8')))
+                        except InvalidToken:
+                            print(' You do not have permissions to see that password,\n'
+                                  ' please re-generate keys with matching alpha and beta passwords')
+                        else:
+                            print(' Password copied to clipboard!')
+                else:
+                    print(' Bad password type, that\'s a critical error')
+            else:
+                print(' That password does not exits')
 
 
 # Option 3
@@ -325,12 +338,12 @@ def set_password():
     Encrypts and saves password to database.
     """
     while True:
-        password_name = input('Provide password name (visible): ')
+        password_name = input(' Provide password name (visible): ')
         if len(password_name) < 4:
-            print('Password alias should be at least 4 characters long')
+            print(' Password alias should be at least 4 characters long')
         else:
             break
-    password_value = getpass('Provide password (or leave empty for random): ')
+    password_value = getpass(' Provide password (or leave empty for random): ')
     if password_value == '':
         password_value = rand_password()
     try:
@@ -344,9 +357,11 @@ def set_password():
         try:
             query('INSERT INTO passwords (`name`, `password`) VALUES (?, ?);', [password_name, password_encrypted])
         except sqlite3.IntegrityError:
-            print('That password already exists!')
+            print(' That password already exists!')
+        except FileNotFoundError:
+            pass
         else:
-            print('Password saved successfully!')
+            print(' Password saved successfully!')
 
 
 # Option 4
@@ -354,35 +369,41 @@ def del_password():
     """
     Deletes password from database, require confirmation.
     """
-    print('Available passwords:\n')
+    print(' Available passwords:\n')
     show_records()
 
-    password_input = input('Choose: ')
+    password_input = input(' Choose: ')
 
     if password_input not in ('', 'c', 'cancel'):
-        to_del = query('SELECT `password` FROM `passwords` WHERE `name` LIKE ?;', [password_input])[0][0]
-        if (proper_type := type(to_del)) is not None:
-            if proper_type is bytes:
-                del_confirm = input('If you want to proceed, please type once more password name: ')
-
+        to_del = query('SELECT `password` FROM `passwords` WHERE `name` LIKE ?;', [password_input])
+        if to_del is not None:
+            to_del = to_del[0][0]
+            if type(to_del) is bytes:
+                del_confirm = input(' If you want to proceed, please type once more password name: ')
                 while True:
                     if password_input == del_confirm:
-                        query('DELETE FROM `passwords` WHERE `name` LIKE ?;', [password_input])
-                        break
+                        try:
+                            query('DELETE FROM `passwords` WHERE `name` LIKE ?;', [password_input])
+                        except FileNotFoundError:
+                            pass
+                        else:
+                            print('Password deleted successfully!')
+                        finally:
+                            break
 
                     elif del_confirm in ('c', 'cancel'):
-                        print('Action cancelled')
+                        print(' Action cancelled')
                         break
 
                     else:
-                        print('Passwords do not match')
+                        print(' Passwords do not match')
                         del_confirm = input('Try once more: ')
             else:
-                print('Bad password type, that\'s a critical error')
+                print(' Bad password type, that\'s a critical error')
         else:
-            print('That password does not exists')
+            print(' That password does not exists')
     else:
-        print('Action cancelled')
+        print(' Action cancelled')
 
 
 # Option 5
@@ -390,29 +411,49 @@ def quick_start():
     """
     Shows general info about the program.
     """
-    print(f' Program name:    {Program.name}\n'
-          f' Current version: {Program.version}\n'
-          f' Author:          {Program.author}\n'
-          f' GitHub:          {Program.git_hub}\n'
-          f' Icon:            {Program.icon}\n'
+    print(f' Name:     {Program.name}\n'
+          f' Version:  {Program.version}\n'
+          f' Author:   {Program.author}\n'
+          f' GitHub:   {Program.git_hub}\n'
+          f' Icon:     {Program.icon}\n'
           f'\n'
-          f' All useful info can be found on GitHub.')
+          f' 3rd party software:\n'
+          f'{Program.rd_party}\n'
+          f'\n'
+          f' All useful info can be found on GitHub.\n'
+          f'\n'
+          f' Remember, that any software to store your passwords won\'t be 100% safe,\n'
+          f' only your head gives you full protection from leaks.')
+
+
+# Option 6
+def exit_program():
+    """
+    Exits program.
+    """
+    clear()
+    print(f'\n * * * Thanks for using {Program.name}! * * *')
+    confirm()
+    sys.exit()
 
 
 if __name__ == '__main__':
+    os.system(f'title {Program.name} {Program.version}')
     clear()
     check_files()
     while True:
         clear()
         print(
-            header(),
-            ' Select option:\n'
+            header() +
+            '\n'
+            ' Select an option:\n'
+            '\n'
             ' 1. Change {0}lpha password\n'  # alpha
             ' 2. {1}et password\n'  # Get
             ' 3. {2}et password\n'  # Set
             ' 4. {3}elete password\n'  # Delete
             ' 5. {4}nfo\n'  # Info
-            ' 0. E{5}it'.format(  # Exit
+            ' 0. E{5}it\n'.format(  # Exit
                 # Options' numbers
                 mark('a'),  # 1
                 mark('G'),  # 2
@@ -421,29 +462,26 @@ if __name__ == '__main__':
                 mark('I'),  # 5
                 mark('x')  # 0
             ))
-        choice = input('Choose: ')
+        choice = input(' Choose: ')
 
         clear()
 
-        if (c := choice.lower()) in ('1', 'a'):
+        if (c := choice.lower()) in ('1', 'a', 'change'):
             generate_master_key()
 
-        elif c in ('2', 'g'):
+        elif c in ('2', 'g', 'get'):
             get_password()
 
-        elif c in ('3', 's'):
+        elif c in ('3', 's', 'set'):
             set_password()
 
-        elif c in ('4', 'd'):
+        elif c in ('4', 'd', 'del', 'delete'):
             del_password()
 
-        elif c in ('5', 'i'):
+        elif c in ('5', 'i', 'info'):
             quick_start()
 
-        elif c in ('0', 'x'):
-            clear()
-            print(f' * Thanks for using {Program.name}! *')
-            confirm()
-            sys.exit()
+        elif c in ('0', 'x', 'exit', 'quit'):
+            exit_program()
 
         confirm()
