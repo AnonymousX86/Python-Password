@@ -17,9 +17,9 @@ safely copied to clipboard.
 ## Quick start guide
 1. At very first launch, program will create 3 files:
 
-   - `salt.key`,
-   - `master.key`,
-   - `passwords.db`.
+   - `Alpha.key`,
+   - `Beta.key`,
+   - `Passwords.db`.
    
    All of them are needed for proper program functioning. Each subsequent start of the program is trying to find those
    files. Every missing file will be re-created.
@@ -27,10 +27,10 @@ safely copied to clipboard.
 2. After program will check files, you will se typical console GUI. You can provide option number, or underlined letter.
    Options are:
    
-   1. **Re-generate master key** - if you want to change your master password.
+   1. **Change alpha password** - if you want to change your master password.
    2. **Get password** - program shows all saved passwords' names and asks which you want to get. Password isn't
       prompted, it's being copied to clipboard. (Same as <kbd>Ctrl + C</kbd>, <kbd>Ctrl + V</kbd>)
-   3. **Save password** - used for saving password.
+   3. **Set password** - used for saving password.
    4. **Delete password** - after double inserting password's name, that password is being deleted from local database.
    5. **Info** - useful links and info about the program.
    6. **Exit** - I think I don't have to describe it.
