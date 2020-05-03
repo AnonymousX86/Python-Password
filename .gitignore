@@ -8,7 +8,9 @@ __pycache__
 venv
 
 # Scripts
+scripts
 *.bat
+*.cmd
 
 # Build output, distribution and sources
 dist
