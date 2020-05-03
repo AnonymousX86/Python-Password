@@ -53,7 +53,7 @@ class File:
     """
     alpha_key = 'Alpha.key'
     beta_key = 'Beta.key'
-    sqlite = 'Passwords.sqlite'
+    sqlite = 'Passwords.db'
 
 
 def header():
