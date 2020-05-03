@@ -19,3 +19,4 @@ src
 # Files that are generated after launching app
 *.key
 *.db
+*.sqlite
