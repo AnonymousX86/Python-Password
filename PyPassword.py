@@ -132,7 +132,7 @@ def check_files():
     """
     print(' Checking files integrity...')
 
-    # Salt (beta password)
+    # Salt - beta password
     try:
         open(file(File.beta_key))
     except FileNotFoundError:
@@ -150,7 +150,7 @@ def check_files():
     else:
         print(f' {File.sqlite} OK!')
 
-    # Master password (alpha password)
+    # Master password - alpha password
     try:
         open(file(File.alpha_key))
     except FileNotFoundError:
