@@ -313,7 +313,8 @@ def get_password():
         except FileNotFoundError:
             pass
         else:
-            if (n := type(to_decrypt)) is not None:
+            n = type(to_decrypt)
+            if n is not None:
                 to_decrypt = to_decrypt[0][0]
                 if n is bytes:
                     with open(file(File.alpha_key), 'rb') as f:
