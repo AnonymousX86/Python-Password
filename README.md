@@ -6,7 +6,10 @@
 
 ## What is the program about?
 Python Password is intended to safely store passwords.
+<<<<<<< Updated upstream
 ##### Current version 0.1 (Alpha)
+=======
+>>>>>>> Stashed changes
 
 ## How does it work?
 Program is saving passwords to local database (SQLite database). Passwords are encrypted with a secret key, based
@@ -14,7 +17,7 @@ on master password and salt, both could be a user input (or only the first one) 
 when it's gone for some reasons. When you would like to get any password it won't be prompted on the screen, but
 safely copied to clipboard.
 
-## Quick start guide
+## Quick start guide for `v0.1.x`
 1. At very first launch, program will create 3 files:
 
    - `Alpha.key`,
