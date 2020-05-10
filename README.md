@@ -1,6 +1,6 @@
 # Python Password
 
-![Python Password](https://github.com/AnonymousX86/Python-Password/workflows/Python%20Password/badge.svg?branch=master)
+![Code correctness](https://github.com/AnonymousX86/Python-Password/workflows/Code%20correctness/badge.svg)
 
 **Hello world!** This is my first project of usable program.
 
