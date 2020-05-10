@@ -366,10 +366,10 @@ Config.set('kivy', 'desktop', 1)
 Config.set('kivy', 'exit_on_esc', 0)
 Config.set('kivy', 'pause_on_minimize', 1)
 
-Config.set('kivy', 'log_dir', file('.', 'p'))
+Config.set('kivy', 'log_dir', file('./logs/', 'p'))
 Config.set('kivy', 'log_enable', 1)
 Config.set('kivy', 'log_level', 'error')
-Config.set('kivy', 'log_name', 'PyPassword_%y-%m-%d_%_.log')
+Config.set('kivy', 'log_name', 'PyPassword_%y-%m-%d_%_.txt')
 Config.set('kivy', 'log_maxfiles', 30)
 
 Builder.load_file(file('py_password.kv', 'p'))
