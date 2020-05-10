@@ -1,5 +1,7 @@
 # Python Password
 
+![Python Password](https://github.com/AnonymousX86/Python-Password/workflows/Python%20Password/badge.svg?branch=master)
+
 **Hello world!** This is my first project of usable program.
 
 *For now it's named as above, because I have no better idea how to name it. Here are some words about it.*
