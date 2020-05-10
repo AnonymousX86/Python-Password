@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='Python Password',
-    version='0.1.2',
+    version='0.2.0',
     description='Simple password storing app.',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -24,7 +24,7 @@ setup(
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Natural Language :: English',
         'Operating System :: Microsoft :: Windows',
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Security :: Cryptography'
     ],
     keywords='password storing security cryptography',
@@ -35,7 +35,7 @@ setup(
     packages=find_packages(),
     # py_modules=[],
     install_requires=requirements,
-    python_requires='~=3.8',
+    python_requires='~=3.7',
     # package_data={},
     # data_files=(),
     # scripts=(),

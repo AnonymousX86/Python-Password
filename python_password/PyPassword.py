@@ -10,11 +10,20 @@ import string
 import sys
 from getpass import getpass
 
+import kivy
 import pyperclip
 from cryptography.fernet import Fernet, InvalidToken
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from kivy import Config
+from kivy.app import App
+from kivy.lang import Builder
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.popup import Popup
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 
 class Color:
@@ -47,7 +56,8 @@ class Program:
     author = 'Jakub S.'
     git_hub = 'https://github.com/AnonymousX86/Python-Password'
     icon = 'Icon made by Freepik from www.flaticon.com'
-    rd_party = '  - UPX'
+    rd_party = '  - UPX\n' \
+               '  - Kivy'
 
 
 class File:
@@ -57,45 +67,6 @@ class File:
     alpha_key = 'Alpha.key'
     beta_key = 'Beta.key'
     sqlite = 'Passwords.db'
-
-
-def header():
-    """
-    Shows welcome text.
-    :return: Formatted text.
-    """
-    h_text = ' '
-    for i in range(len(Program.name) + len(Program.version) + 10):
-        h_text += '-'
-    h_text += '\n' + \
-              f' +++ {Program.name} v{Program.version} +++\n '
-    for i in range(len(Program.name) + len(Program.version) + 10):
-        h_text += '-'
-    h_text += '\n'
-    return h_text
-
-
-def mark(txt: str):
-    """
-    Underlines text.
-    :param txt: Text to underline.
-    :return: Underlined text.
-    """
-    return Color.UNDERLINE + txt + Color.END
-
-
-def clear():
-    """
-    Clears the console. For now Windows (NT) only.
-    """
-    os.system('cls')
-
-
-def confirm():
-    """
-    Prints confirmation and waits for ENTER to be pressed.
-    """
-    input('\n ---\n\n Press ENTER to continue...')
 
 
 def show_records(records=None):
@@ -112,17 +83,6 @@ def show_records(records=None):
     else:
         for record in records:
             print(f' - {record[0]}\n')
-
-
-def missing_file(file_name: str):
-    """
-    Shows info about missing file.
-    :param file_name: Name of missing file.
-    """
-    print(f' {file_name} file has removed while processing!\n'
-          f' This file is needed for proper working.\n'
-          f' Restart program to create one.')
-    confirm()
 
 
 def check_files():
@@ -166,7 +126,7 @@ def file(filename: str):
     :param filename: File name.
     :return: Absolute path to file with specified name.
     """
-    return os.path.join(os.path.dirname(__file__), filename)
+    return os.path.join(os.path.dirname(__file__), f'data/{filename}')
 
 
 def query(q_input: str, q_args=None):
@@ -181,16 +141,13 @@ def query(q_input: str, q_args=None):
     try:
         open(file(File.sqlite))
     except FileNotFoundError:
-        missing_file(File.sqlite)
         raise FileNotFoundError
     else:
-        conn = sqlite3.connect(file(File.sqlite))
-        my_cursor = conn.cursor()
-        my_cursor.execute(q_input, q_args)
-        records = my_cursor.fetchall()
-        conn.commit()
-        my_cursor.close()
-        conn.close()
+        with sqlite3.connect(file(File.sqlite)) as conn:
+            with conn.cursor() as my_cursor:
+                my_cursor.execute(q_input, q_args)
+                records = my_cursor.fetchall()
+                conn.commit()
         return records
 
 
@@ -250,7 +207,7 @@ def generate_salt():
             with open(file(File.beta_key), 'wb') as f:
                 f.write(custom_salt)
         except FileNotFoundError:
-            missing_file(File.beta_key)
+            raise FileNotFoundError
         else:
             print(' Beta password created successfully!')
 
@@ -263,7 +220,7 @@ def generate_master_key():
     try:
         open(file(File.beta_key), 'rb')
     except FileNotFoundError:
-        missing_file(File.beta_key)
+        raise FileNotFoundError
     else:
         while True:
             password_input = input(' Provide alpha password: ')
@@ -282,14 +239,14 @@ def generate_master_key():
                     backend=default_backend()
                 )
         except FileNotFoundError:
-            missing_file(File.beta_key)
+            raise FileNotFoundError
         else:
             key = base64.urlsafe_b64encode(kdf.derive(password))
             try:
                 with open(file(File.alpha_key), 'wb') as f:
                     f.write(key)
             except FileNotFoundError:
-                missing_file(File.alpha_key)
+                raise FileNotFoundError
             else:
                 print(' Alpha key created successfully!')
 
@@ -353,7 +310,7 @@ def set_password():
             f = Fernet(key)
             password_encrypted = f.encrypt(password_value.encode())
     except FileNotFoundError:
-        missing_file(File.alpha_key)
+        raise FileNotFoundError
     else:
         try:
             query('INSERT INTO passwords (`name`, `password`) VALUES (?, ?);', [password_name, password_encrypted])
@@ -407,82 +364,164 @@ def del_password():
         print(' Action cancelled')
 
 
-# Option 5
-def quick_start():
-    """
-    Shows general info about the program.
-    """
-    print(f' Name:     {Program.name}\n'
-          f' Version:  {Program.version}\n'
-          f' Author:   {Program.author}\n'
-          f' GitHub:   {Program.git_hub}\n'
-          f' Icon:     {Program.icon}\n'
-          f'\n'
-          f' 3rd party software:\n'
-          f'{Program.rd_party}\n'
-          f'\n'
-          f' All useful info can be found on GitHub.\n'
-          f'\n'
-          f' Remember, that any software to store your passwords won\'t be 100% safe,\n'
-          f' only your head gives you full protection from leaks.')
+kivy.require('1.11.1')
+Config.set('kivy', 'window_icon', './data/icon.ico')
+Builder.load_file(file('py_password.kv'))
 
 
-# Option 6
-def exit_program():
-    """
-    Exits program.
-    """
-    clear()
-    print(f'\n * * * Thanks for using {Program.name}! * * *')
-    confirm()
-    sys.exit()
+class MenuScreen(Screen):
+    title_size = 30
+    title_text = '[b]Welcome to Python Password[/b]'
+    btn_font = 20
+    btn_width = .5
+    btn_pos = {'center_x': .5}
+
+    def goto_settings(self):
+        print('Go to settings called')
+        self.manager.transition.direction = 'left'
+        self.manager.current = 'settings'
+
+    def goto_info(self):
+        print('Go to info called')
+        self.manager.transition.direction = 'left'
+        self.manager.current = 'info'
+
+    def exit_program(self):
+        print('Exit called')
+        sys.exit()
+
+
+class SettingsScreen(Screen):
+    def back(self):
+        self.manager.transition.direction = 'right'
+        self.manager.current = 'menu'
+
+    def submit(self):
+        print('Submit called')
+        print(self)
+
+        popup_size = 250
+        btn_size = (.5, .3)
+        btn_pos = {'center_x': 0.5}
+
+        if len(self.ids['alpha'].text) < 6:
+            data = BoxLayout(orientation='vertical')
+            data.add_widget(Label(text='Password should be at least 6 characters long.'))
+            data.add_widget(Button(
+                text='OK', on_press=lambda a: alert_pop.dismiss(),
+                size_hint=btn_size, pos_hint=btn_pos))
+
+            alert_pop = Popup(
+                title='Bad format!',
+                content=data,
+                size_hint=(None, None),
+                size=(popup_size * 1.61, popup_size),
+                auto_dismiss=True
+            )
+
+        else:
+            data = BoxLayout(orientation='vertical')
+            data.add_widget(Label(text='Password successfully saved.'))
+            data.add_widget(Button(
+                text='OK', on_press=lambda a: alert_pop.dismiss(),
+                size_hint=btn_size, pos_hint=btn_pos))
+
+            alert_pop = Popup(
+                title='Success!',
+                content=data,
+                size_hint=(None, None),
+                size=(popup_size * 1.61, popup_size),
+                auto_dismiss=True,
+                on_dismiss=lambda a: self.back()
+            )
+
+        alert_pop.open()
+
+
+class InfoScreen(Screen):
+    info_text = \
+        'Name:     {0.name}\n' \
+        'Version:  {0.version}\n' \
+        'Author:   {0.author}\n' \
+        'GitHub:   {0.git_hub}\n' \
+        'Icon:     {0.icon}\n' \
+        '\n' \
+        'Third party software:\n' \
+        '{0.rd_party}\n' \
+        '\n' \
+        'All useful info can be found on GitHub.\n' \
+        '\n' \
+        'Remember, that any software to store your passwords won\'t be 100% safe,\n' \
+        'only your head gives you full protection from leaks.'.format(Program)
+
+    def back(self):
+        print('Back from info called')
+        self.manager.transition.direction = 'right'
+        self.manager.current = 'menu'
+
+
+sm = ScreenManager()
+sm.add_widget(MenuScreen(name='menu'))
+sm.add_widget(SettingsScreen(name='settings'))
+sm.add_widget(InfoScreen(name='info'))
+
+
+class PyPassword(App, BoxLayout):
+    def build(self):
+        # self.icon = './data/icon.ico'
+        return sm
 
 
 if __name__ == '__main__':
-    os.system(f'title {Program.name} {Program.version}')
-    clear()
-    check_files()
-    while True:
-        clear()
-        print(
-            header() +
-            '\n'
-            ' Select an option:\n'
-            '\n'
-            ' 1. Change {0}lpha password\n'  # alpha
-            ' 2. {1}et password\n'  # Get
-            ' 3. {2}et password\n'  # Set
-            ' 4. {3}elete password\n'  # Delete
-            ' 5. {4}nfo\n'  # Info
-            ' 0. E{5}it\n'.format(  # Exit
-                # Options' numbers
-                mark('a'),  # 1
-                mark('G'),  # 2
-                mark('S'),  # 3
-                mark('D'),  # 4
-                mark('I'),  # 5
-                mark('x')  # 0
-            ))
-        choice = input(' Choose: ')
+    PyPassword().run()
 
-        clear()
-
-        if (c := choice.lower()) in ('1', 'a', 'change'):
-            generate_master_key()
-
-        elif c in ('2', 'g', 'get'):
-            get_password()
-
-        elif c in ('3', 's', 'set'):
-            set_password()
-
-        elif c in ('4', 'd', 'del', 'delete'):
-            del_password()
-
-        elif c in ('5', 'i', 'info'):
-            quick_start()
-
-        elif c in ('0', 'x', 'exit', 'quit'):
-            exit_program()
-
-        confirm()
+# if __name__ == '__main__':
+#     os.system(f'title {Program.name} {Program.version}')
+#     clear()
+#     check_files()
+#     while True:
+#         clear()
+#         print(
+#             header() +
+#             '\n'
+#             ' Select an option:\n'
+#             '\n'
+#             ' 1. Change {0}lpha password\n'  # alpha
+#             ' 2. {1}et password\n'  # Get
+#             ' 3. {2}et password\n'  # Set
+#             ' 4. {3}elete password\n'  # Delete
+#             ' 5. {4}nfo\n'  # Info
+#             ' 0. E{5}it\n'.format(  # Exit
+#                 # Options' numbers
+#                 mark('a'),  # 1
+#                 mark('G'),  # 2
+#                 mark('S'),  # 3
+#                 mark('D'),  # 4
+#                 mark('I'),  # 5
+#                 mark('x')  # 0
+#             ))
+#         choice = input(' Choose: ')
+#
+#         clear()
+#
+#         c = choice.lower()
+#
+#         if c in ('1', 'a', 'change'):
+#             generate_master_key()
+#
+#         elif c in ('2', 'g', 'get'):
+#             get_password()
+#
+#         elif c in ('3', 's', 'set'):
+#             set_password()
+#
+#         elif c in ('4', 'd', 'del', 'delete'):
+#             del_password()
+#
+#         elif c in ('5', 'i', 'info'):
+#             quick_start()
+#
+#         elif c in ('0', 'x', 'exit', 'quit'):
+#             exit_program()
+#
+#         confirm()
