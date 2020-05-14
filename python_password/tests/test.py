@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .PyPassword import encrypt, query, rand_password, file
+from python_password.PyPassword import encrypt, query, rand_password, file
 
 
 def test_encrypt():
