@@ -23,7 +23,77 @@ from python_password.utils.database import *
 from python_password.utils.files import *
 
 
+class Todo:
+    """Methods to add to ``PyPassword`` - app wrapper."""
+
+    # TODO - Add ``copy_password`` method
+    def copy_password(self, alias):
+        to_decrypt = query(
+            'SELECT `password` FROM `passwords` WHERE `name` LIKE ?;',
+            [alias]
+        )
+        n = type(to_decrypt)
+        if n is not None:
+            to_decrypt = to_decrypt[0][0]
+            if n is bytes:
+                with open(file(Files.alpha_key), 'rb') as f:
+                    key = f.read()
+                    f = Fernet(key)
+                    try:
+                        pyperclip.copy(str(f.decrypt(to_decrypt).decode('utf-8')))
+                    except InvalidToken:
+                        # Alpha key does not match
+                        pass
+                    else:
+                        # Password copied to clipboard
+                        pass
+            else:
+                # Bad password type, not saved to a ``byte``
+                pass
         else:
+            # That password does not exits
+            pass
+
+    # TODO - Add ``del_password`` method
+    def del_password(self, alias):
+        to_del = query(
+            'SELECT `password` FROM `passwords` WHERE `name` LIKE ?;',
+            [alias]
+        )
+        if to_del is not None:
+            to_del = to_del[0][0]
+            if type(to_del) is bytes:
+                del_confirm = input('If you want to proceed, please once more enter password name: ')
+                while True:
+                    if alias == del_confirm:
+                        try:
+                            query(
+                                'DELETE FROM `passwords` WHERE `name` LIKE ?;',
+                                [alias]
+                            )
+                        except FileNotFoundError:
+                            pass
+                        else:
+                            # Password deleted successfully
+                            pass
+                        finally:
+                            break
+
+                    elif del_confirm in ('c', 'cancel'):
+                        # Action cancelled
+                        break
+
+                    else:
+                        # Passwords do not match
+                        del_confirm = input('Try once more: ')
+            else:
+                # Bad password type, that is a critical error
+                pass
+        else:
+            # That password does not exists
+            pass
+
+
 class ContentNavigationDrawer(BoxLayout):
     """Container for side menu."""
     screen_manager = ObjectProperty()

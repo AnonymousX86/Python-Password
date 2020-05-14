@@ -27,3 +27,5 @@ This file contains changes made to `Python Password` program.
 - Most functions from console UI version.
 - User files are now saved to `AppData\Local` directory.
 
+### 0.2.1: May 15, 2020
+
