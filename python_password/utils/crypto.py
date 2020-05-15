@@ -4,7 +4,7 @@ import string
 
 from cryptography.fernet import Fernet
 
-from utils.files import file, Files, generate_salt
+from utils.files import appdata, Files, generate_salt
 
 
 def encrypt(text):
@@ -14,16 +14,16 @@ def encrypt(text):
     :return: Encrypted text.
     """
     try:
-        open(file(Files.beta_key))
+        open(appdata(Files.beta_key))
     except FileNotFoundError:
         generate_salt()
     finally:
         try:
-            open(file(Files.alpha_key))
+            open(appdata(Files.alpha_key))
         except FileNotFoundError:
             return None
         else:
-            with open(file(Files.alpha_key), 'rb') as f:
+            with open(appdata(Files.alpha_key), 'rb') as f:
                 key = f.read()
                 f = Fernet(key)
                 return f.encrypt(text.encode())

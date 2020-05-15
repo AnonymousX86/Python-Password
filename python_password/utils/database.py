@@ -3,14 +3,14 @@ import sqlite3
 
 from kivy import Logger
 
-from utils.files import file, Files, generate_appdata
+from utils.files import appdata, Files, generate_appdata
 
 
 def generate_sqlite():
     """Creates SQLite database."""
     try:
         generate_appdata()
-        open(file(Files.sqlite), 'x')
+        open(appdata(Files.sqlite), 'x')
     except FileExistsError:
         pass
     else:
@@ -31,11 +31,11 @@ def query(q_input: str, q_args=None):
     if q_args is None:
         q_args = []
     try:
-        open(file(Files.sqlite))
+        open(appdata(Files.sqlite))
     except FileNotFoundError:
         generate_sqlite()
     finally:
-        with sqlite3.connect(file(Files.sqlite)) as conn:
+        with sqlite3.connect(appdata(Files.sqlite)) as conn:
             my_cursor = conn.cursor()
             try:
                 my_cursor.execute(q_input, q_args)

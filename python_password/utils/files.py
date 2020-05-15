@@ -11,26 +11,15 @@ class Files:
     sqlite = 'Passwords.db'
 
 
-def file(filename: str, file_type='u'):
+def appdata(filename: str):
     """
-    Add absolute path to file name.
-    Linking to user data in ~/AppData/Local/PyPassword or
-        program data directory next to ``.exe`` file.
+    Linking to user data in ~/AppData/Local/PyPassword/.
     :param filename: File to access name.
-    :param file_type: Is file program or user related.
     :return: Absolute path to file with specified name.
     """
-    Logger.trace(f'Files: Accessing {filename} file ({file_type} type)')
-
-    # Program files
-    if file_type == 'p':
-        return os.path.join(os.path.dirname(__file__), f'../PyPassword_data/{filename}')
-    # User files
-    elif file_type == 'u':
-        return os.path.join(os.path.dirname(__file__), f'{os.getenv("LOCALAPPDATA")}/PyPassword/{filename}')
-    else:
-        Logger.critical(f'Files: Tried to access file of unknown type')
-        raise NameError('That kind of files does not exist')
+    Logger.trace(f'Files: Accessing {filename} file')
+    return os.path.join(os.path.dirname(__file__),
+                        f'{os.getenv("LOCALAPPDATA")}{os.sep}PyPassword{os.sep}{filename}')
 
 
 def generate_appdata():
@@ -43,13 +32,13 @@ def generate_salt(preset=None):
     """Generates salt - Beta.key file."""
     try:
         generate_appdata()
-        open(file(Files.beta_key), 'x')
+        open(appdata(Files.beta_key), 'x')
     except FileExistsError:
         pass
     else:
         Logger.info(f'Structure: {Files.beta_key} file not found, creating it.')
     finally:
         custom_salt = os.urandom(16) if preset is None else preset
-        with open(file(Files.beta_key), 'wb') as f:
+        with open(appdata(Files.beta_key), 'wb') as f:
             f.write(custom_salt)
         Logger.info('Structure: Beta password changed.')
