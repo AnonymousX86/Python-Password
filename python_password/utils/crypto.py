@@ -29,16 +29,6 @@ def encrypt(text):
                 return f.encrypt(text.encode())
 
 
-def decrypt(text):
-    """
-    Decrypts provided text with alpha password.
-    :param text: Text to decrypt.
-    :return: Decrypted text or ``None`` if alpha password do not match encryption password.
-    """
-    pass
-    # TODO - Decryption function
-
-
 def rand_password(length: int = 16):
     """
     Creating a password from upper and lowercase letters, numbers and basic special characters.
