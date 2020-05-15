@@ -23,75 +23,27 @@ from python_password.utils.database import *
 from python_password.utils.files import *
 
 
-class Todo:
-    """Methods to add to ``PyPassword`` - app wrapper."""
+class CustomDialog:
+    def __init__(self, title, text, alert_text='OK', **kwargs):
+        super().__init__(**kwargs)
+        self.title = title
+        self.text = text
+        self.alert_text = alert_text
+        self.auto_dismiss = False
 
-    # TODO - Add ``copy_password`` method
-    def copy_password(self, alias):
-        to_decrypt = query(
-            'SELECT `password` FROM `passwords` WHERE `name` LIKE ?;',
-            [alias]
+    def alert(self):
+        alert = MDDialog(
+            title=self.title,
+            text=self.text,
+            auto_dismiss=self.auto_dismiss,
+            buttons=[
+                MDRaisedButton(
+                    text=self.alert_text,
+                    on_release=lambda x: alert.dismiss()
+                )
+            ]
         )
-        n = type(to_decrypt)
-        if n is not None:
-            to_decrypt = to_decrypt[0][0]
-            if n is bytes:
-                with open(file(Files.alpha_key), 'rb') as f:
-                    key = f.read()
-                    f = Fernet(key)
-                    try:
-                        pyperclip.copy(str(f.decrypt(to_decrypt).decode('utf-8')))
-                    except InvalidToken:
-                        # Alpha key does not match
-                        pass
-                    else:
-                        # Password copied to clipboard
-                        pass
-            else:
-                # Bad password type, not saved to a ``byte``
-                pass
-        else:
-            # That password does not exits
-            pass
-
-    # TODO - Add ``del_password`` method
-    def del_password(self, alias):
-        to_del = query(
-            'SELECT `password` FROM `passwords` WHERE `name` LIKE ?;',
-            [alias]
-        )
-        if to_del is not None:
-            to_del = to_del[0][0]
-            if type(to_del) is bytes:
-                del_confirm = input('If you want to proceed, please once more enter password name: ')
-                while True:
-                    if alias == del_confirm:
-                        try:
-                            query(
-                                'DELETE FROM `passwords` WHERE `name` LIKE ?;',
-                                [alias]
-                            )
-                        except FileNotFoundError:
-                            pass
-                        else:
-                            # Password deleted successfully
-                            pass
-                        finally:
-                            break
-
-                    elif del_confirm in ('c', 'cancel'):
-                        # Action cancelled
-                        break
-
-                    else:
-                        # Passwords do not match
-                        del_confirm = input('Try once more: ')
-            else:
-                # Bad password type, that is a critical error
-                pass
-        else:
-            # That password does not exists
-            pass
+        return alert
 
 
 class ContentNavigationDrawer(BoxLayout):
@@ -104,42 +56,15 @@ class ContentNavigationDrawer(BoxLayout):
         self.screen_manager.current = name
 
 
-# Kivy template for hor reload
-KV = '''
-#:import KivyLexer kivy.extras.highlight.KivyLexer
-#:import HotReloadViewer kivymd.utils.hot_reload_viewer.HotReloadViewer
-
-
-BoxLayout:
-
-    CodeInput:
-        lexer: KivyLexer()
-        style_name: "native"
-        on_text: app.update_kv_file(self.text)
-        size_hint_x: .7
-
-    HotReloadViewer:
-        size_hint_x: .3
-        path: app.path_to_kv_file
-        errors: True
-        errors_text_color: 1, 1, 0, 1
-        errors_background_color: app.theme_cls.bg_dark
-'''
-
-
 class PyPassword(MDApp):
     """Main application wrapper."""
     Logger.info('Application: Building application')
+    icon = file('icon.ico', 'p')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         self.passwords = []
-        raw = query('SELECT `name` FROM `passwords`;')
-        if raw is not None:
-            for password in raw:
-                self.passwords.append(password[0])
-        del raw
 
         self.info = {
             'name': 'Python Password',
@@ -152,6 +77,14 @@ class PyPassword(MDApp):
             'rd_party': 'UPX, Kivy and KivyMD'
         }
 
+        self.del_confirm = False
+
+    def set_confirm(self, state: bool):
+        self.del_confirm = state
+
+    def get_confirm(self):
+        return self.del_confirm
+
     def build(self):
         # Change main color
         self.theme_cls.primary_palette = 'Indigo'
@@ -162,7 +95,6 @@ class PyPassword(MDApp):
 
     def on_start(self):
         self.update_passwords()
-        self.root.ids.screen_manager.current = 'settings'
 
     # ================================
     #    Context menus and dialogs
@@ -179,12 +111,18 @@ class PyPassword(MDApp):
                 MDRectangleFlatIconButton(
                     icon='content-copy',
                     text='Copy',
-                    on_release=lambda x: [self.wip_info(), ctx_dialog.dismiss()]
+                    on_release=lambda x: [
+                        self.copy_password(instance.text),
+                        ctx_dialog.dismiss()
+                    ]
                 ),
                 MDRectangleFlatIconButton(
                     icon='trash-can-outline',
                     text='Delete',
-                    on_release=lambda x: [self.wip_info(), ctx_dialog.dismiss()]
+                    on_release=lambda x: [
+                        self.del_password(instance.text),
+                        ctx_dialog.dismiss()
+                    ]
                 ),
                 MDRectangleFlatIconButton(
                     icon='arrow-left-circle-outline',
@@ -216,17 +154,10 @@ class PyPassword(MDApp):
 
     def wip_info(self):
         Logger.trace('Called: wip_info')
-        info_dialog = MDDialog(
-            title='Warning',
-            text='This feature is under development.',
-            auto_dismiss=False,
-            buttons=[
-                MDRaisedButton(
-                    text='OK',
-                    on_release=lambda x: info_dialog.dismiss()
-                )
-            ]
-        )
+        info_dialog = CustomDialog(
+            title='Work in progress',
+            text='This feature is under development.'
+        ).alert()
         info_dialog.open()
 
     # ================================
@@ -257,59 +188,143 @@ class PyPassword(MDApp):
 
             except sqlite3.IntegrityError:
                 Logger.info(f'Passwords: Tried to save "{password_alias}" but already exists.')
-                result_dialog = MDDialog(
+                result_dialog = CustomDialog(
                     title='Whoops!',
-                    text='That password already exists.',
-                    auto_dismiss=False,
-                    buttons=[
-                        MDRaisedButton(
-                            text='OK',
-                            on_press=lambda x: result_dialog.dismiss()
-                        )
-                    ]
-                )
+                    text='That password already exists.'
+                ).alert()
 
             else:
                 Logger.info(f'Passwords: Password "{password_alias}" saved.')
-                result_dialog = MDDialog(
+                result_dialog = CustomDialog(
                     title='Success!',
-                    text=f'Password [b]{password_alias}[/b] successfully saved.',
-                    auto_dismiss=False,
-                    buttons=[
-                        MDRaisedButton(
-                            text='OK',
-                            on_press=lambda x: result_dialog.dismiss()
-                        )
-                    ]
-                )
+                    text=f'Password "{password_alias}" successfully saved.'
+                ).alert()
 
         else:
-            result_dialog = MDDialog(
+            result_dialog = CustomDialog(
                 title='Whoops!',
-                text='The entered data is invalid.',
-                auto_dismiss=False,
-                buttons=[
-                    MDRaisedButton(
-                        text='OK',
-                        on_press=lambda x: result_dialog.dismiss()
-                    )
-                ]
-            )
+                text='The entered data is invalid.'
+            ).alert()
 
         result_dialog.open()
+        alias_box.text = ''
+        value_box.text = ''
+        self.update_passwords()
 
     def copy_password(self, password=None):
-        """Copying password value to clipboard."""
-        Logger.trace('Called: copy_password')
-        pass
-
-    def del_password(self, password=None):
         """
+        Checks password if exists, checks integrity with alpha password and copies it to clipboard.
         Invoked by button in ``passwords`` screen,
             or ``Copy`` button in context menu from ``ctx_password`` method.
         """
+        Logger.trace('Called: copy_password')
+        to_decrypt = query(
+            'SELECT `password` FROM `passwords` WHERE `name` LIKE ?;',
+            [password]
+        )
+        n = type(to_decrypt)
+        if n is not None:
+            to_decrypt = to_decrypt[0][0]
+            if type(to_decrypt) is bytes:
+                with open(file(Files.alpha_key), 'rb') as f:
+                    key = f.read()
+                    f = Fernet(key)
+                    try:
+                        pyperclip.copy(str(f.decrypt(to_decrypt).decode('utf-8')))
+                    except InvalidToken:
+                        result_dialog = CustomDialog(
+                            title='Warning!',
+                            text='Alpha password do not match. If you want to access this password,'
+                                 ' please change alpha password. If needed, change beta password too.'
+                        ).alert()
+                    else:
+                        result_dialog = CustomDialog(
+                            title='Success!',
+                            text='Password copied to clipboard. Now you can paste in somewhere.'
+                        ).alert()
+            else:
+                result_dialog = CustomDialog(
+                    title='Warning!',
+                    text='An critical error has occurred. Passwords are saved to local database in wrong way.'
+                ).alert()
+        else:
+            result_dialog = CustomDialog(
+                title='Warning!',
+                text='That password do not exists in database'
+            ).alert()
+        result_dialog.open()
+
+    def del_password(self, password=None):
+        """
+        Deletes password from database, do NOT checks integrity with alpha password.
+        Invoked by button in ``passwords`` screen,
+            or ``Delete`` button in context menu from ``ctx_password`` method.
+        """
         Logger.trace('Called: del_password')
-        pass
+
+        if password is None:
+            password = self.root.ids.del_password_alias.text
+
+        to_del = query(
+            'SELECT `password` FROM `passwords` WHERE `name` LIKE ?;',
+            [password]
+        )
+        if to_del is not None:
+            to_del = to_del[0][0]
+            if type(to_del) is bytes:
+                result_dialog = MDDialog(
+                    title='Attention',
+                    text=f'Do you really want to delete "{password}" password?',
+                    auto_dismiss=False,
+                    buttons=[
+                        MDFillRoundFlatIconButton(
+                            text='Yes',
+                            icon='check-circle-outline',
+                            on_release=lambda x: [
+                                self.del_password_confirm(password=password),
+                                result_dialog.dismiss()
+                            ]
+                        ),
+                        MDRoundFlatIconButton(
+                            text='No',
+                            icon='close-circle-outline',
+                            on_release=lambda x: self.dismiss_and_back(result_dialog)
+                        )
+                    ]
+                )
+            else:
+                Logger.critical(
+                    f'Database: Password "{password}" is stored as "{type(to_del)}" type instead of "byte" type')
+                result_dialog = CustomDialog(
+                    title='Warning!',
+                    text='An critical error has occurred. Passwords are saved to local database in wrong way.'
+                ).alert()
+        else:
+            result_dialog = CustomDialog(
+                title='Warning!',
+                text='That password do not exists in database'
+            ).alert()
+        result_dialog.open()
+        self.update_passwords()
+
+    def del_password_confirm(self, password):
+        """This method is called after pressing ``Yes`` in ``del_password`` dialog."""
+        query(
+            'DELETE FROM `passwords` WHERE `name` LIKE ?;',
+            [password]
+        )
+        result_dialog = MDDialog(
+            title='Success!',
+            text=f'Password "{password}" successfully deleted',
+            auto_dismiss=False,
+            buttons=[
+                MDRaisedButton(
+                    text='OK',
+                    on_release=lambda x: self.dismiss_and_back(result_dialog)
+                )
+            ]
+        )
+        result_dialog.open()
 
     # ================================
     #          Alpha password
@@ -326,17 +341,10 @@ class PyPassword(MDApp):
             password = preset
 
         if len(password) < 6:
-            result_dialog = MDDialog(
+            result_dialog = CustomDialog(
                 title='Whoops!',
-                text='Password should be at least 6 characters long.',
-                auto_dismiss=False,
-                buttons=[
-                    MDRaisedButton(
-                        text='OK',
-                        on_release=lambda x: result_dialog.dismiss()
-                    )
-                ]
-            )
+                text='Password should be at least 6 characters long.'
+            ).alert()
             password_box.error = True
 
         else:
@@ -364,17 +372,10 @@ class PyPassword(MDApp):
                         f.write(key)
                         Logger.info('Passwords: Alpha password has changed')
 
-                    result_dialog = MDDialog(
+                    result_dialog = CustomDialog(
                         title='Success!',
-                        text='New alpha password successfully saved.',
-                        auto_dismiss=False,
-                        buttons=[
-                            MDRaisedButton(
-                                text='OK',
-                                on_press=lambda x: self.dismiss_and_back(result_dialog)
-                            )
-                        ]
-                    )
+                        text='New alpha password successfully saved.'
+                    ).alert()
 
         password_box.text = ''
         result_dialog.open()
@@ -421,36 +422,22 @@ class PyPassword(MDApp):
             password = preset
 
         if len(password) < 6:
-            result_dialog = MDDialog(
+            result_dialog = CustomDialog(
                 title='Whoops!',
-                text='Password should be at least 6 characters long.',
-                auto_dismiss=False,
-                buttons=[
-                    MDRaisedButton(
-                        text='OK',
-                        on_release=lambda x: result_dialog.dismiss()
-                    )
-                ]
-            )
+                text='Password should be at least 6 characters long.'
+            ).alert()
             password_box.error = True
 
         else:
             password_box.error = False
             generate_salt(preset=password)
-            result_dialog = MDDialog(
+            result_dialog = CustomDialog(
                 title='Success!',
-                text='Password successfully saved.',
-                auto_dismiss=False,
-                buttons=[
-                    MDRaisedButton(
-                        text='OK',
-                        on_release=lambda x: self.dismiss_and_back(result_dialog)
-                    )
-                ]
-            )
+                text='Password successfully saved.'
+            ).alert()
 
         password_box.text = ''
-        password_box.open()
+        result_dialog.open()
 
     def reset_beta(self):
         """Changes beta password to random, 16 unicode characters long string."""
@@ -496,6 +483,43 @@ class PyPassword(MDApp):
         # TODO - importing a backup
 
     # ================================
+    #            Passwords
+    # ================================
+
+    def update_passwords(self):
+        Logger.trace('Called: refresh_callback')
+        Logger.debug('Application: Passwords refreshing')
+
+        self.fetch_passwords()
+
+        self.root.ids.passwords_list.clear_widgets()
+
+        for password in sorted(self.passwords):
+            self.root.ids.passwords_list.add_widget(
+                OneLineListItem(
+                    text=password,
+                    on_release=lambda x: self.ctx_password(x)
+                )
+            )
+
+        count = len(self.passwords)
+        if count == 0:
+            text = 'There are no passwords in database.'
+        elif count == 1:
+            text = 'There\'s only 1 password in database.'
+        else:
+            text = f'There are {count} passwords in database.'
+        self.root.ids.passwords_count.text = text
+
+    def fetch_passwords(self):
+        passwords = []
+        raw = query('SELECT `name` FROM `passwords`;')
+        if raw is not None:
+            for password in raw:
+                passwords.append(password[0])
+        self.passwords = passwords
+
+    # ================================
     #               Misc
     # ================================
 
@@ -513,33 +537,6 @@ class PyPassword(MDApp):
         Logger.trace('Called: dismiss_and_back')
         self.root.ids.screen_manager.current = where
         instance.dismiss()
-
-    def update_passwords(self):
-        """Update passwords' list in main menu (``passwords`` screen)."""
-        Logger.trace('Called: update_passwords')
-        Logger.debug('Application: Passwords updating')
-
-        # Remove all widgets
-        self.root.ids.passwords_list.clear_widgets()
-
-        # And create them updated
-        for password in sorted(self.passwords):
-            new_widget = OneLineListItem(
-                text=password,
-                on_release=lambda x: self.ctx_password(x)
-            )
-            self.root.ids.passwords_list.add_widget(new_widget)
-
-        # Update passwords count
-        count = len(self.passwords)
-        if count == 0:
-            text = 'There are no passwords in database.'
-        elif count == 1:
-            text = 'There\'s only 1 password in database.'
-        else:
-            text = f'There are {count} passwords in database.'
-
-        self.root.ids.passwords_count.text = text
 
     def validate_input(self, instance, length):
         """
@@ -567,11 +564,13 @@ if __name__ == '__main__':
     Config.set('kivy', 'desktop', 1)
     Config.set('kivy', 'exit_on_esc', 0)
     Config.set('kivy', 'pause_on_minimize', 0)
-    Config.set('graphics', 'resizable', 1)
+    Config.set('graphics', 'resizable', 0)
 
     Config.set('kivy', 'log_dir', file('./logs/', 'p'))
     Config.set('kivy', 'log_enable', 0)
-    Config.set('kivy', 'log_level', 'warning')
+    Config.set('kivy', 'log_level', 'debug')
     Config.set('kivy', 'log_maxfiles', 10)
+
+    Config.write()
 
     PyPassword().run()
