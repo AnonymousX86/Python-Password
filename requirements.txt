@@ -1,2 +1,11 @@
-cryptography
+cryptography~=2.9.2
 pyperclip
+docutils
+pygments
+pypiwin32
+kivy_deps.sdl2
+kivy_deps.glew
+kivy_deps.gstreamer
+kivy_deps.angle
+kivy~=1.11.1
+kivymd~=0.104.1

@@ -1,11 +1,15 @@
 # Cache
 __pycache__
+.pytest_cache
 
 # IDE folder
 .idea
 
 # Virtual env
 venv
+
+# Logs
+logs
 
 # Scripts
 scripts

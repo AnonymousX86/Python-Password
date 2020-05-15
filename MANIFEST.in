@@ -1,3 +1,5 @@
 include *.md
 include LICENSE
 include *.kv
+include *.py
+include requirements.txt
