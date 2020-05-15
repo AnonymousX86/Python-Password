@@ -10,6 +10,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from kivy import Config
+from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.app import MDApp
@@ -92,6 +93,7 @@ class PyPassword(MDApp):
         # Change theme (light/dark)
         self.theme_cls.theme_style = 'Light'
         Logger.info(f'Application: Theme style set to {self.theme_cls.theme_style}')
+        return Builder.load_file(file('PyPassword.kv', 'p'))
 
     def on_start(self):
         self.update_passwords()
