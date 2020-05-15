@@ -10,7 +10,6 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from kivy import Config
-from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.app import MDApp
@@ -60,7 +59,6 @@ class ContentNavigationDrawer(BoxLayout):
 class PyPassword(MDApp):
     """Main application wrapper."""
     Logger.info('Application: Building application')
-    icon = file('icon.ico', 'p')
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -93,7 +91,6 @@ class PyPassword(MDApp):
         # Change theme (light/dark)
         self.theme_cls.theme_style = 'Light'
         Logger.info(f'Application: Theme style set to {self.theme_cls.theme_style}')
-        return Builder.load_file(file('PyPassword.kv', 'p'))
 
     def on_start(self):
         self.update_passwords()
@@ -178,7 +175,7 @@ class PyPassword(MDApp):
         ok_alias = self.validate_input(alias_box, 3)
         ok_value = self.validate_input(value_box, 6)
 
-        password_alias = alias_box.text
+        password_alias = alias_box.text.capitalize()
         password_value = value_box.text
 
         if ok_alias is True and ok_value is True:
@@ -228,7 +225,7 @@ class PyPassword(MDApp):
         if n is not None:
             to_decrypt = to_decrypt[0][0]
             if type(to_decrypt) is bytes:
-                with open(file(Files.alpha_key), 'rb') as f:
+                with open(appdata(Files.alpha_key), 'rb') as f:
                     key = f.read()
                     f = Fernet(key)
                     try:
@@ -265,7 +262,9 @@ class PyPassword(MDApp):
         Logger.trace('Called: del_password')
 
         if password is None:
-            password = self.root.ids.del_password_alias.text
+            password = self.root.ids.del_password_alias.text.capitalize()
+
+        self.root.ids.del_password_alias.text = ''
 
         to_del = query(
             'SELECT `password` FROM `passwords` WHERE `name` LIKE ?;',
@@ -307,7 +306,6 @@ class PyPassword(MDApp):
                 text='That password do not exists in database'
             ).alert()
         result_dialog.open()
-        self.update_passwords()
 
     def del_password_confirm(self, password):
         """This method is called after pressing ``Yes`` in ``del_password`` dialog."""
@@ -327,6 +325,7 @@ class PyPassword(MDApp):
             ]
         )
         result_dialog.open()
+        self.update_passwords()
 
     # ================================
     #          Alpha password
@@ -352,16 +351,16 @@ class PyPassword(MDApp):
         else:
             password_box.error = False
             try:
-                open(file(Files.beta_key))
+                open(appdata(Files.beta_key))
             except FileNotFoundError:
                 generate_salt()
             finally:
                 try:
-                    open(file(Files.alpha_key))
+                    open(appdata(Files.alpha_key))
                 except FileNotFoundError:
-                    open(file(Files.alpha_key), 'x')
+                    open(appdata(Files.alpha_key), 'x')
                 finally:
-                    with open(file(Files.beta_key), 'rb') as f:
+                    with open(appdata(Files.beta_key), 'rb') as f:
                         kdf = PBKDF2HMAC(
                             algorithm=hashes.SHA256(),
                             length=32,
@@ -369,7 +368,7 @@ class PyPassword(MDApp):
                             iterations=100000,
                             backend=default_backend()
                         )
-                    with open(file(Files.alpha_key), 'wb') as f:
+                    with open(appdata(Files.alpha_key), 'wb') as f:
                         key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
                         f.write(key)
                         Logger.info('Passwords: Alpha password has changed')
@@ -562,15 +561,14 @@ class PyPassword(MDApp):
 if __name__ == '__main__':
     kivy.require('1.11.1')
 
-    Config.set('kivy', 'window_icon', file('icon.ico', 'p'))
     Config.set('kivy', 'desktop', 1)
     Config.set('kivy', 'exit_on_esc', 0)
     Config.set('kivy', 'pause_on_minimize', 0)
-    Config.set('graphics', 'resizable', 0)
+    Config.set('graphics', 'resizable', 1)
 
-    Config.set('kivy', 'log_dir', file('./logs/', 'p'))
-    Config.set('kivy', 'log_enable', 0)
-    Config.set('kivy', 'log_level', 'debug')
+    Config.set('kivy', 'log_dir', appdata(f'.{os.sep}logs{os.sep}'))
+    Config.set('kivy', 'log_enable', 1)
+    Config.set('kivy', 'log_level', 'error')
     Config.set('kivy', 'log_maxfiles', 10)
 
     Config.write()
