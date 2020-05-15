@@ -1,12 +1,8 @@
 # Python Password
 
-<<<<<<< HEAD
 ![Code correctness](https://github.com/AnonymousX86/Python-Password/workflows/Code%20correctness/badge.svg)
 
 **Hello world!** This is my first project of usable program.
-=======
-**Hello world!** This is my very first project of usable program.
->>>>>>> dev
 
 ### What is the program about?
 
