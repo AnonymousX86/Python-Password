@@ -29,3 +29,5 @@ This file contains changes made to `Python Password` program.
 
 ### 0.2.1: May 15, 2020
 
+- Updated GUI to material design standard.
+- All functions of `v0.1.*` included.
