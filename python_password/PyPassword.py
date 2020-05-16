@@ -72,7 +72,7 @@ class PyPassword(MDApp):
 
         self.info = {
             'name': 'Python Password',
-            'version': '0.2.1',
+            'version': '0.2.2',
             'author': 'Jakub Suchenek',
             'github': 'https://github.com/AnonymousX86/Python-Password',
             'faq': 'https://github.com/AnonymousX86/Python-Password/blob/master/docs/FAQ.md',
