@@ -185,18 +185,25 @@ class PyPassword(MDApp):
                     [password_alias, encrypt(password_value)]
                 )
 
-            except sqlite3.IntegrityError:
-                Logger.info(f'Passwords: Tried to save "{password_alias}" but already exists.')
-                result_dialog = CustomDialog(
-                    title='Whoops!',
-                    text='That password already exists.'
-                ).alert()
+                except sqlite3.IntegrityError:
+                    Logger.info(f'Passwords: Tried to save "{password_alias}" but already exists.')
+                    result_dialog = CustomDialog(
+                        title='Whoops!',
+                        text='That password already exists or not all settings are set.'
+                    ).alert()
+
+                else:
+                    Logger.info(f'Passwords: Password "{password_alias}" saved.')
+                    result_dialog = CustomDialog(
+                        title='Success!',
+                        text=f'Password "{password_alias}" successfully saved.'
+                    ).alert()
 
             else:
                 Logger.info(f'Passwords: Password "{password_alias}" saved.')
                 result_dialog = CustomDialog(
-                    title='Success!',
-                    text=f'Password "{password_alias}" successfully saved.'
+                    title='Whoops!',
+                    text='The entered values are too short or invalid.'
                 ).alert()
 
         else:
@@ -341,12 +348,12 @@ class PyPassword(MDApp):
         else:
             password = preset
 
-        if len(password) < 6:
-            result_dialog = CustomDialog(
-                title='Whoops!',
-                text='Password should be at least 6 characters long.'
-            ).alert()
-            password_box.error = True
+            if len(password) < 6:
+                result_dialog = CustomDialog(
+                    title='Whoops!',
+                    text='Alpha password should be at least 6 characters long.'
+                ).alert()
+                password_box.error = True
 
         else:
             password_box.error = False
@@ -425,17 +432,24 @@ class PyPassword(MDApp):
         if len(password) < 6:
             result_dialog = CustomDialog(
                 title='Whoops!',
-                text='Password should be at least 6 characters long.'
+                text='Beta password should be at least 6 characters long.'
             ).alert()
             password_box.error = True
 
         else:
             password_box.error = False
             generate_salt(preset=password)
-            result_dialog = CustomDialog(
+            result_dialog = MDDialog(
                 title='Success!',
-                text='Password successfully saved.'
-            ).alert()
+                text='Beta password successfully saved.',
+                auto_dismiss=False,
+                buttons=[
+                    MDRaisedButton(
+                        text='OK',
+                        on_release=lambda x: self.dismiss_and_back(result_dialog)
+                    )
+                ]
+            )
 
         password_box.text = ''
         result_dialog.open()
@@ -542,7 +556,7 @@ class PyPassword(MDApp):
     def validate_input(self, instance, length):
         """
         Checks text input.
-        :param instance: Which object has to be checked.
+        :param instance: Which widget has to be checked.
         :param length: Minimum length of provided text.
         """
         Logger.debug('Called: validate_input')
@@ -568,7 +582,7 @@ if __name__ == '__main__':
 
     Config.set('kivy', 'log_dir', appdata(f'.{os.sep}logs{os.sep}'))
     Config.set('kivy', 'log_enable', 1)
-    Config.set('kivy', 'log_level', 'error')
+    Config.set('kivy', 'log_level', 'warning')
     Config.set('kivy', 'log_maxfiles', 10)
 
     Config.write()
