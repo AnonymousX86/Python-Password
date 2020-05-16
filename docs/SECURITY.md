@@ -8,6 +8,7 @@
 | 0.1.2   | :white_check_mark: |
 | 0.2.0   | :x:                |
 | 0.2.1   | :white_check_mark: |
+| 0.2.2   | :white_check_mark: |
 
 ## Supported operating systems
 For now Python Password is tested only for Windows. Program could be unstable on Linux or OS X.
