@@ -16,8 +16,7 @@ from kivymd.app import MDApp
 from kivymd.uix.button import MDRectangleFlatIconButton, MDRaisedButton, MDFillRoundFlatIconButton, \
     MDRoundFlatIconButton
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.list import OneLineListItem, ThreeLineAvatarListItem, IconRightWidget, IconLeftWidget, \
-    ThreeLineIconListItem
+from kivymd.uix.list import OneLineListItem, ThreeLineIconListItem
 
 from python_password.utils.crypto import *
 from python_password.utils.database import *
