@@ -100,6 +100,7 @@ class PyPassword(MDApp):
 
     def on_start(self):
         self.update_passwords()
+        self.check_alpha()
 
     # ================================
     #    Context menus and dialogs
@@ -166,30 +167,106 @@ class PyPassword(MDApp):
         info_dialog.open()
 
     # ================================
+    #             Checks
+    # ================================
+
+    def check_alpha(self):
+        """Checks if beta password is set. If so, checks if alpha password is set.
+        That's because beta password is required to save alpha password."""
+        Logger.debug('Called: check_alpha')
+        ok_beta = self.check_beta()
+        if ok_beta is True:
+            try:
+                open(appdata(Files.alpha_key))
+            except FileNotFoundError:
+                alert_dialog = MDDialog(
+                    title='Missing alpha password',
+                    text='I\'ve noticed, that you have not set alpha password. It\'s needed for safe password storing.'
+                         ' Do you want to provide it by yourself, or let program to randomize it?',
+                    auto_dismiss=False,
+                    buttons=[
+                        MDFillRoundFlatIconButton(
+                            text='Set password',
+                            icon='account-key-outline',
+                            on_release=lambda x: self.dismiss_and_back(alert_dialog, 'settings')
+                        ),
+                        MDRoundFlatIconButton(
+                            text='Randomize',
+                            icon='dice-multiple-outline',
+                            on_release=lambda x: [
+                                self.change_alpha(rand_password()),
+                                alert_dialog.dismiss()
+                            ]
+                        )
+                    ]
+                )
+                alert_dialog.open()
+                return False
+            else:
+                return True
+
+    def check_beta(self):
+        """Checks if beta password is set."""
+        Logger.debug('Called: check_beta')
+        try:
+            open(appdata(Files.beta_key))
+        except FileNotFoundError:
+            alert_dialog = MDDialog(
+                title='Missing beta password',
+                text='I\'ve noticed, that you have not set beta password. It\'s needed for safe password storing.'
+                     ' Do you want to provide it by yourself, or let program to randomize it?',
+                auto_dismiss=False,
+                buttons=[
+                    MDFillRoundFlatIconButton(
+                        text='Set password',
+                        icon='account-key-outline',
+                        on_release=lambda x: self.dismiss_and_back(alert_dialog, 'settings')
+                    ),
+                    MDRoundFlatIconButton(
+                        text='Randomize',
+                        icon='dice-multiple-outline',
+                        on_release=lambda x: [
+                            self.reset_beta(),
+                            alert_dialog.dismiss()
+                        ]
+                    )
+                ]
+            )
+            alert_dialog.open()
+            return False
+        else:
+            return True
+
+    # ================================
     #        Passwords managing
     # ================================
 
     def add_password(self):
         """Adding passwords to database. Invoked by button in ``passwords`` menu."""
         Logger.trace('Called: add_password')
-        alias_box = self.root.ids.password_alias
-        value_box = self.root.ids.password_value
+        try:
+            open(appdata(Files.alpha_key))
+        except FileNotFoundError:
+            self.check_alpha()
+        else:
+            alias_box = self.root.ids.password_alias
+            value_box = self.root.ids.password_value
 
-        self.validate_input(alias_box, 3)
-        self.validate_input(value_box, 6)
+            self.validate_input(alias_box, 3)
+            self.validate_input(value_box, 6)
 
-        ok_alias = self.validate_input(alias_box, 3)
-        ok_value = self.validate_input(value_box, 6)
+            ok_alias = self.validate_input(alias_box, 3)
+            ok_value = self.validate_input(value_box, 6)
 
-        password_alias = alias_box.text.capitalize()
-        password_value = value_box.text
+            password_alias = alias_box.text.capitalize()
+            password_value = value_box.text
 
-        if ok_alias is True and ok_value is True:
-            try:
-                query(
-                    'INSERT INTO passwords (`name`, `password`) VALUES (?, ?);',
-                    [password_alias, encrypt(password_value)]
-                )
+            if ok_alias is True and ok_value is True:
+                try:
+                    query(
+                        'INSERT INTO passwords (`name`, `password`) VALUES (?, ?);',
+                        [password_alias, encrypt(password_value)]
+                    )
 
                 except sqlite3.IntegrityError:
                     Logger.info(f'Passwords: Tried to save "{password_alias}" but already exists.')
@@ -206,22 +283,15 @@ class PyPassword(MDApp):
                     ).alert()
 
             else:
-                Logger.info(f'Passwords: Password "{password_alias}" saved.')
                 result_dialog = CustomDialog(
                     title='Whoops!',
                     text='The entered values are too short or invalid.'
                 ).alert()
 
-        else:
-            result_dialog = CustomDialog(
-                title='Whoops!',
-                text='The entered data is invalid.'
-            ).alert()
-
-        result_dialog.open()
-        alias_box.text = ''
-        value_box.text = ''
-        self.update_passwords()
+            result_dialog.open()
+            alias_box.text = ''
+            value_box.text = ''
+            self.update_passwords()
 
     def copy_password(self, password=None):
         """
@@ -279,45 +349,56 @@ class PyPassword(MDApp):
 
         self.root.ids.del_password_alias.text = ''
 
-        to_del = query(
-            'SELECT `password` FROM `passwords` WHERE `name` LIKE ?;',
-            [password]
-        )
-        if to_del is not None:
-            to_del = to_del[0][0]
-            if type(to_del) is bytes:
-                result_dialog = MDDialog(
-                    title='Attention',
-                    text=f'Do you really want to delete "{password}" password?',
-                    auto_dismiss=False,
-                    buttons=[
-                        MDFillRoundFlatIconButton(
-                            text='Yes',
-                            icon='check-circle-outline',
-                            on_release=lambda x: [
-                                self.del_password_confirm(password=password),
-                                result_dialog.dismiss()
-                            ]
-                        ),
-                        MDRoundFlatIconButton(
-                            text='No',
-                            icon='close-circle-outline',
-                            on_release=lambda x: self.dismiss_and_back(result_dialog)
-                        )
-                    ]
-                )
+        if len(password) == 0:
+            result_dialog = CustomDialog(
+                title='Whoops',
+                text='Please provide password alias at first.'
+            ).alert()
+        elif len(password) < 3:
+            result_dialog = CustomDialog(
+                title='Whoops',
+                text='Password alias has to be at least 3 characters long.'
+            ).alert()
+        else:
+            to_del = query(
+                'SELECT `password` FROM `passwords` WHERE `name` LIKE ?;',
+                [password]
+            )
+            if len(to_del) > 0:
+                to_del = to_del[0][0]
+                if type(to_del) is bytes:
+                    result_dialog = MDDialog(
+                        title='Attention',
+                        text=f'Do you really want to delete "{password}" password?',
+                        auto_dismiss=False,
+                        buttons=[
+                            MDFillRoundFlatIconButton(
+                                text='Yes',
+                                icon='check-circle-outline',
+                                on_release=lambda x: [
+                                    self.del_password_confirm(password=password),
+                                    result_dialog.dismiss()
+                                ]
+                            ),
+                            MDRoundFlatIconButton(
+                                text='No',
+                                icon='close-circle-outline',
+                                on_release=lambda x: self.dismiss_and_back(result_dialog)
+                            )
+                        ]
+                    )
+                else:
+                    Logger.critical(
+                        f'Database: Password "{password}" is stored as "{type(to_del)}" type instead of "byte" type')
+                    result_dialog = CustomDialog(
+                        title='Warning!',
+                        text='An critical error has occurred. Passwords are saved to local database in wrong way.'
+                    ).alert()
             else:
-                Logger.critical(
-                    f'Database: Password "{password}" is stored as "{type(to_del)}" type instead of "byte" type')
                 result_dialog = CustomDialog(
                     title='Warning!',
-                    text='An critical error has occurred. Passwords are saved to local database in wrong way.'
+                    text='That password do not exists in database'
                 ).alert()
-        else:
-            result_dialog = CustomDialog(
-                title='Warning!',
-                text='That password do not exists in database'
-            ).alert()
         result_dialog.open()
 
     def del_password_confirm(self, password):
@@ -347,12 +428,14 @@ class PyPassword(MDApp):
     def change_alpha(self, preset=None):
         """Changing alpha password based on text input or random value from ``reset_alpha`` method."""
         Logger.trace('Called: change_alpha')
+        ok_beta = self.check_beta()
         password_box = self.root.ids.alpha_change
+        if ok_beta is True:
 
-        if preset is None:
-            password = password_box.text
-        else:
-            password = preset
+            if preset is None:
+                password = password_box.text
+            else:
+                password = preset
 
             if len(password) < 6:
                 result_dialog = CustomDialog(
@@ -361,38 +444,38 @@ class PyPassword(MDApp):
                 ).alert()
                 password_box.error = True
 
-        else:
-            password_box.error = False
-            try:
-                open(appdata(Files.beta_key))
-            except FileNotFoundError:
-                generate_salt()
-            finally:
+            else:
+                password_box.error = False
                 try:
-                    open(appdata(Files.alpha_key))
+                    open(appdata(Files.beta_key))
                 except FileNotFoundError:
-                    open(appdata(Files.alpha_key), 'x')
-                finally:
-                    with open(appdata(Files.beta_key), 'rb') as f:
-                        kdf = PBKDF2HMAC(
-                            algorithm=hashes.SHA256(),
-                            length=32,
-                            salt=f.read(),
-                            iterations=100000,
-                            backend=default_backend()
-                        )
-                    with open(appdata(Files.alpha_key), 'wb') as f:
-                        key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
-                        f.write(key)
-                        Logger.info('Passwords: Alpha password has changed')
+                    self.check_beta()
+                    return
+                else:
+                    try:
+                        open(appdata(Files.alpha_key))
+                    except FileNotFoundError:
+                        open(appdata(Files.alpha_key), 'x')
+                    finally:
+                        with open(appdata(Files.beta_key), 'rb') as f:
+                            kdf = PBKDF2HMAC(
+                                algorithm=hashes.SHA256(),
+                                length=32,
+                                salt=f.read(),
+                                iterations=100000,
+                                backend=default_backend()
+                            )
+                        with open(appdata(Files.alpha_key), 'wb') as f:
+                            key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
+                            f.write(key)
+                            Logger.info('Passwords: Alpha password has changed')
+                        result_dialog = CustomDialog(
+                            title='Success!',
+                            text='New alpha password successfully saved.'
+                        ).alert()
 
-                    result_dialog = CustomDialog(
-                        title='Success!',
-                        text='New alpha password successfully saved.'
-                    ).alert()
-
+            result_dialog.open()
         password_box.text = ''
-        result_dialog.open()
 
     def reset_alpha(self):
         """Changing alpha password to ``random_password`` function value."""
@@ -526,8 +609,24 @@ class PyPassword(MDApp):
         count = len(self.passwords)
         if count == 0:
             text = 'There are no passwords in database.'
+            self.root.ids.passwords_list.add_widget(
+                NewbieTip(
+                    text='Welcome to Python Password',
+                    secondary_text='Save your first password, by entering',
+                    tertiary_text='it\'s data on the right',
+                    icon='arrow-right-bold-circle'
+                )
+            )
         elif count == 1:
             text = 'There\'s only 1 password in database.'
+            self.root.ids.passwords_list.add_widget(
+                NewbieTip(
+                    text='Congratulations!',
+                    secondary_text='You have saved your\'s 1st password.',
+                    tertiary_text='Preview it just by clicking it.',
+                    icon='arrow-up-bold-circle'
+                )
+            )
         else:
             text = f'There are {count} passwords in database.'
         self.root.ids.passwords_count.text = text
