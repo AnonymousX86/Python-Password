@@ -31,3 +31,10 @@ This file contains changes made to `Python Password` program.
 
 - Updated GUI to material design standard.
 - All functions of `v0.1.*` included.
+
+### 0.2.2: May 16, 2020
+
+- Added tips for new users.
+- Checking master passwords on program start.
+- Fixed bug: unable to save beta password with random password.
+- Fixed bug: "that password already exists" dialog showed up when alpha password wasn't set.
