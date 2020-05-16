@@ -38,7 +38,7 @@ def generate_salt(preset=None):
     else:
         Logger.info(f'Structure: {Files.beta_key} file not found, creating it.')
     finally:
-        custom_salt = os.urandom(16) if preset is None else preset
+        custom_salt = os.urandom(16) if preset is None else preset if type(preset) is bytes else preset.encode()
         with open(appdata(Files.beta_key), 'wb') as f:
             f.write(custom_salt)
         Logger.info('Structure: Beta password changed.')
