@@ -10,13 +10,14 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from kivy import Config
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.app import MDApp
 from kivymd.uix.button import MDRectangleFlatIconButton, MDRaisedButton, MDFillRoundFlatIconButton, \
     MDRoundFlatIconButton
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.list import OneLineListItem
+from kivymd.uix.list import OneLineListItem, ThreeLineAvatarListItem, IconRightWidget, IconLeftWidget, \
+    ThreeLineIconListItem
 
 from python_password.utils.crypto import *
 from python_password.utils.database import *
@@ -44,6 +45,11 @@ class CustomDialog:
             ]
         )
         return alert
+
+
+class NewbieTip(ThreeLineIconListItem):
+    """Widget that's showed when there's one or two passwords in database."""
+    icon = StringProperty()
 
 
 class ContentNavigationDrawer(BoxLayout):
