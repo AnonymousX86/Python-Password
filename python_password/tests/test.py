@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from python_password.PyPassword import encrypt, query, rand_password, appdata
+from python_password.PyPassword import encrypt, query, random_password, appdata
 
 
 def test_encrypt():
@@ -17,7 +17,7 @@ def test_sqlite():
 
 def test_random_password():
     for i in range(100000):
-        assert rand_password() != rand_password(), 'test failed, random passwords are the same'
+        assert random_password() != random_password(), 'test failed, random passwords are the same'
 
 
 def test_access_file():
