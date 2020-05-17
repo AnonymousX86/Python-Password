@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='Python Password',
-    version='0.2.0',
+    version='0.2.2',
     description='Simple password storing app.',
     long_description=long_description,
     long_description_content_type='text/markdown',
