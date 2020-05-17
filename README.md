@@ -2,25 +2,25 @@
 
 ![Code correctness](https://github.com/AnonymousX86/Python-Password/workflows/Code%20correctness/badge.svg)
 
-**Hello world!** This is my first project of usable program.
+**This project is about my first desktop app - password manager. It's made with Python 3.7 and material design standard.**
 
-### What is the program about?
+### What's the program about?
 
-Python Password is intended to safely store passwords.
+Python Password is intended to safely store passwords. They are encrypted with two master passwords and saved locally.
+Master passwords could be randomly generated or set by user. So you can re-create them when they're gone for some reasons
+or you'd like to share your passwords with someone. Of course many users on the same PC will have separate data folders.
+When you would like to get any password it won' be prompted on the screen, but safely copied to clipboard with no risk
+that someone could view your password.
 
-### How does it work?
+![Passwords menu](https://github.com/AnonymousX86/Python-Password/blob/master/docs/screenshots/Passwords%20menu.png)
 
-Program is saving passwords to local database (SQLite database). Passwords are encrypted with a secret key, based on
-master password and salt, both could be a user input or random values, so you can re-create the file when it's gone for
-some reasons. When you would like to get any password it won't be prompted on the screen, but safely copied to
-clipboard.
 
 ## Quick start guide
 
 
 ### Passwords menu
 
-Maim screen of program is passwords menu. From here you can:
+Main screen of program is passwords menu. From here you can:
 
 - add passwords,
 - copy passwords,
@@ -31,10 +31,10 @@ menu wth 3 options; "copy", "delete" and "nothing".
 
 On the right side there are 4 sections.
 
-1. **Adding password.** To add password, simply enter it's alias and password itself. Then click button to add it.
-2. **Removing password.** You can delete password also from here. Simply provide it's alias and click button.
-3. **Info.** - Here you can see how many passwords there are in database.
-4. **Refresh.** - Click this button to refresh view, and fetch passwords from local database.
+1. **Adding password** - to add password, simply enter it's alias and password itself. Then click button to add it.
+2. **Removing password** - you can delete password also from here. Simply provide it's alias and click button.
+3. **Info** -hHere you can see how many passwords there are in database.
+4. **Refresh** - click this button to refresh view, and fetch passwords from local database.
   
   
 ### Settings menu
@@ -44,9 +44,11 @@ In this menu, you can:
 - change alpha password,
 - change beta password.
 
-You can see in `FAQ.md` how do they work.
+You can see
+[in `FAQ.md`](https://github.com/AnonymousX86/Python-Password/blob/master/docs/FAQ.md#what-are-alpha-and-beta-passwords)
+how do they work.
 
-There will be also options to manage backups.
+![Settings with side menu](https://github.com/AnonymousX86/Python-Password/blob/master/docs/screenshots/Settings%20with%20side%20menu.png)
 
 
 ### Info menu
@@ -59,6 +61,22 @@ On the right side you can see (of course clickable) links.
 ## How to start using?
 
 For download please look at [releases section](https://github.com/AnonymousX86/Python-Password/releases).
+
+![Context](https://github.com/AnonymousX86/Python-Password/blob/master/docs/screenshots/Context.png)
+
+
+## Future updates
+
+I'm going to add:
+- theme changing,
+- many translations,
+- backups.
+
+
+### You can find more informations about project in:
+
+- [FAQ](https://github.com/AnonymousX86/Python-Password/blob/master/docs/FAQ.md).
+- [Changelog](https://github.com/AnonymousX86/Python-Password/blob/master/docs/CHANGELOG.md).
 
 ---
 
