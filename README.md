@@ -7,9 +7,9 @@
 ### What's the program about?
 
 Python Password is intended to safely store passwords. They are encrypted with two master passwords and saved locally.
-Master passwords could be randomly generated or set by user. So you can re-create them when they're gone for some reasons
+Master passwords could be randomly generated or set by user, so you can re-create them when they're gone for some reasons
 or you'd like to share your passwords with someone. Of course many users on the same PC will have separate data folders.
-When you would like to get any password it won' be prompted on the screen, but safely copied to clipboard with no risk
+When you would like to get any password it won't be prompted on the screen, but safely copied to clipboard with no risk
 that someone could view your password.
 
 ![Passwords menu](https://github.com/AnonymousX86/Python-Password/blob/master/docs/screenshots/Passwords%20menu.png)
