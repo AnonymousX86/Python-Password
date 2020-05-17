@@ -1,27 +1,27 @@
 # -*- coding: utf-8 -*-
-from python_password.PyPassword import encrypt, query, rand_password, file
+import os
+
+from python_password.PyPassword import encrypt, query, rand_password, appdata
 
 
 def test_encrypt():
-    origin = 'Foo Bar Baz'
-    assert origin != encrypt(origin), 'test failed, encryption does not work'
+    for i in range(1000):
+        for name in ['a' * x for x in range(32)]:
+            assert name != encrypt(name), 'test failed, encryption does not work'
 
 
 def test_sqlite():
-    q = query('SELECT sqlite_version();')
-    assert q is not None, 'test failed, can not connect to database'
+    for i in range(100):
+        assert query('SELECT sqlite_version();') is not None, 'test failed, can not connect to database'
 
 
 def test_random_password():
-    foo = rand_password()
-    bar = rand_password()
-    assert foo != bar, 'test failed, random passwords are the same'
+    for i in range(100000):
+        assert rand_password() != rand_password(), 'test failed, random passwords are the same'
 
 
 def test_access_file():
-    for name in ('foo', 'bar'):
-        p_filename = file(name, 'p')[-19::]
-        assert p_filename == f'PyPassword_data/{name}', f'test failed because ``p_filename`` is {p_filename}'
-
-        u_filename = file(name)[-14::]  # Default 'u' option
-        assert u_filename == f'PyPassword/{name}', f'test failed because ``u_filename`` is {u_filename}'
+    for i in range(100):
+        for name in ['a' * x for x in range(255)]:
+            filename = appdata(name)[-(len('PyPassword')+len(os.sep)+len(name))::]
+            assert filename == f'PyPassword{os.sep}{name}', f'test failed because ``u_filename`` is {filename}'
