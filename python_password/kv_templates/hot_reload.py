@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+Hot reload viewer.
+Docs: https://kivymd.readthedocs.io/en/latest/unincluded/kivymd/utils/hot_reload_viewer/index.html
+"""
 KV = '''
 #:import KivyLexer kivy.extras.highlight.KivyLexer
 #:import HotReloadViewer kivymd.utils.hot_reload_viewer.HotReloadViewer
