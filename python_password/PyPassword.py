@@ -67,8 +67,8 @@ class PyPassword(MDApp):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.theme_cls.primary_palette = 'Indigo'
-        self.theme_cls.theme_style = 'Dark'
-        self.text_color_hex = 'ffffff'
+        self.theme_cls.theme_style = 'Light'
+        self.text_color_hex = '111111'
         self.passwords = []
         self.info = {
             'name': 'Python Password',
