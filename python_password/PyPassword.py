@@ -82,7 +82,7 @@ class PyPassword(MDApp):
         }
 
     # It has to be outside ``__init__``
-    text_color_hsl = ListProperty([1, 1, 1, 1])
+    text_color_rgba = ListProperty([.06, .06, .06, 1])
 
     def build(self):
         with open(f'kv_templates{sep}PyPassword.kv', encoding='utf8') as fd:
@@ -501,12 +501,12 @@ class PyPassword(MDApp):
         elif self.theme_cls.theme_style == 'Light':
             self.theme_cls.theme_style = 'Dark'
             self.text_color_hex = 'ffffff'
-            self.text_color_hsl = (1, 1, 1, 1)
+            self.text_color_rgba = (1, 1, 1, 1)
 
         elif self.theme_cls.theme_style == 'Dark':
             self.theme_cls.theme_style = 'Light'
             self.text_color_hex = '111111'
-            self.text_color_hsl = (.06, .06, .06, 1)
+            self.text_color_rgba = (.06, .06, .06, 1)
 
         else:
             raise NameError('No theme found')
