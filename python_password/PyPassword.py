@@ -6,7 +6,7 @@ from webbrowser import open_new_tab
 from cryptography.fernet import InvalidToken
 from kivy import Config, require as kivy_require
 from kivy.lang import Builder
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.properties import ObjectProperty, StringProperty, ListProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.app import MDApp
 from kivymd.uix.button import MDRectangleFlatIconButton, MDRaisedButton, MDFillRoundFlatIconButton, \
@@ -22,6 +22,7 @@ from python_password.utils.files import *
 
 class SimpleDialog:
     """Simple dialogs."""
+
     def __init__(self, title, text, alert_text='OK', **kwargs):
         super().__init__(**kwargs)
         self.title = title
@@ -62,14 +63,16 @@ class ContentNavigationDrawer(BoxLayout):
 
 class PyPassword(MDApp):
     """Main application wrapper."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
+        self.theme_cls.primary_palette = 'Indigo'
+        self.theme_cls.theme_style = 'Dark'
+        self.text_color_hex = 'ffffff'
         self.passwords = []
-
         self.info = {
             'name': 'Python Password',
-            'version': '0.2.2',
+            'version': '0.2.3',
             'author': 'Jakub Suchenek',
             'github': 'https://github.com/AnonymousX86/Python-Password',
             'faq': 'https://github.com/AnonymousX86/Python-Password/blob/master/docs/FAQ.md',
@@ -78,9 +81,10 @@ class PyPassword(MDApp):
             'rd_party': 'UPX, Kivy and KivyMD'
         }
 
+    # It has to be outside ``__init__``
+    text_color_hsl = ListProperty([1, 1, 1, 1])
+
     def build(self):
-        self.theme_cls.primary_palette = 'Indigo'
-        self.theme_cls.theme_style = 'Light'
         with open(f'kv_templates{sep}PyPassword.kv', encoding='utf8') as fd:
             kv = Builder.load_string(fd.read())
         return kv
@@ -88,6 +92,7 @@ class PyPassword(MDApp):
     def on_start(self):
         self.update_passwords_list()
         self.masters_ok()
+        # self.switch_theme()
 
     # ================================
     #           Information
@@ -96,7 +101,7 @@ class PyPassword(MDApp):
     def ctx_password(self, instance):
         """Shows dialog with options what to do with password."""
         ctx_dialog = MDDialog(
-            title=instance.text.capitalize(),
+            title=f'[color=#{self.text_color_hex}]{instance.text.capitalize()}[/color]',
             text='Choose what do you want to do wth this password.',
             auto_dismiss=False,
             buttons=[
@@ -128,7 +133,8 @@ class PyPassword(MDApp):
     def detailed_info(self, name):
         """Opens dialog about specific info about program in ``info`` screen."""
         info_dialog = MDDialog(
-            title=name.capitalize() if name != 'rd_party' else '3rd party software',
+            title=f'[color={self.text_color_hex}]' +
+                  (name.capitalize() if name != 'rd_party' else '3rd party software') + '[/color]',
             text=self.info[name],
             auto_dismiss=False,
             buttons=[
@@ -138,8 +144,8 @@ class PyPassword(MDApp):
                     text='Freepik', icon='web',
                     on_release=lambda x:
                     self.open_url('https://www.freepik.com/')
-                ) if name == 'icon' else None,
-            ]
+                ) if name == 'icon' else None
+                ]
         )
         info_dialog.open()
 
@@ -488,13 +494,22 @@ class PyPassword(MDApp):
     #               Misc
     # ================================
 
-    def switch_theme(self):
-        current = self.theme_cls.theme_style
-        if current == 'Light':
-            set_to = 'Dark'
+    def switch_theme(self, force=None):
+        if force is not None:
+            self.theme_cls.theme_style = force
+
+        elif self.theme_cls.theme_style == 'Light':
+            self.theme_cls.theme_style = 'Dark'
+            self.text_color_hex = 'ffffff'
+            self.text_color_hsl = (1, 1, 1, 1)
+
+        elif self.theme_cls.theme_style == 'Dark':
+            self.theme_cls.theme_style = 'Light'
+            self.text_color_hex = '111111'
+            self.text_color_hsl = (.06, .06, .06, 1)
+
         else:
-            set_to = 'Light'
-        self.theme_cls.theme_style = set_to
+            raise NameError('No theme found')
 
     def open_url(self, url):
         open_new_tab(url)
@@ -523,7 +538,7 @@ if __name__ == '__main__':
 
     Config.set('kivy', 'log_dir', appdata(f'.{sep}logs{sep}'))
     Config.set('kivy', 'log_enable', 1)
-    Config.set('kivy', 'log_level', 'debug')
+    Config.set('kivy', 'log_level', 'warning')
     Config.set('kivy', 'log_maxfiles', 10)
 
     Config.write()

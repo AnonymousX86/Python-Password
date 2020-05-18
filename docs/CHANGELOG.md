@@ -2,6 +2,12 @@
 
 This file contains changes made to `Python Password` program.
 
+## [0.2.3] - 2020-05-18
+### Added
+- Dark theme. (optional)
+## Fixed
+- Rewrote most methods to increase stability.
+
 ## [0.2.2] - 2020-05-16
 ### Added
 - Tips for new users.
@@ -45,7 +51,8 @@ First usable pre-release.
 - Set password option.
 - Get password option.
 
-[0.2.2]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.1-alpha
+[0.2.3]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.3-alpha
+[0.2.2]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.2-alpha
 [0.2.1]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.1-alpha
 [0.2.0]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.0-alpha
 [0.1.2]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.1.2-alpha
