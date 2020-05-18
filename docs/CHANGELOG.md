@@ -50,4 +50,4 @@ First usable pre-release.
 [0.2.0]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.0-alpha
 [0.1.2]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.1.2-alpha
 [0.1.1]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.1.1-alpha
-[0.1.0]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.1-alpha
+[0.1.0]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.1.0-alpha
