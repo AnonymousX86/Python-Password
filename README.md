@@ -73,7 +73,7 @@ I'm going to add:
 - backups.
 
 
-### You can find more informations about project in:
+### You can find more information about project in:
 
 - [FAQ](https://github.com/AnonymousX86/Python-Password/blob/master/docs/FAQ.md).
 - [Changelog](https://github.com/AnonymousX86/Python-Password/blob/master/docs/CHANGELOG.md).
