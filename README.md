@@ -65,12 +65,16 @@ For download please look at [releases section](https://github.com/AnonymousX86/P
 ![Context](https://github.com/AnonymousX86/Python-Password/blob/master/docs/screenshots/Context.png)
 
 
-## Future updates
+## Ideas what to add
 
-I'm going to add:
-- theme changing,
-- many translations,
-- backups.
+| Idea | Added in version |
+| ---- | ---------------- |
+| Theme changing. | v0.2.3 |
+| Many translations. | - |
+| Exporting and importing backups. | - |
+| Clear cache 15 seconds after copy password. | - |
+| Login system. | - |
+| Ciphering database. | - |
 
 
 ### You can find more information about project in:
