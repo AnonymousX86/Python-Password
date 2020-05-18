@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from os import getenv, path, sep, system
+from os import getenv, path, sep, mkdir
 
 
 class Files:
@@ -11,7 +11,10 @@ class Files:
 
 def generate_appdata():
     """Creates ``PyPassword`` ~/AppData/Local/PyPassword directory if not exists."""
-    system('cd %localappdata% && if not exists "PyPassword" @md "PyPassword"')
+    try:
+        mkdir(f'{getenv("LOCALAPPDATA")}{sep}PyPassword')
+    except FileExistsError:
+        pass
 
 
 def appdata(filename: str):
