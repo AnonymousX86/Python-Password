@@ -132,7 +132,7 @@ class PyPassword(MDApp):
         )
         ctx_dialog.open()
 
-    def detailed_info(self, name):
+    def detailed_info(self, name: str):
         """Opens dialog about specific info about program in ``info`` screen."""
         info_dialog = MDDialog(
             title=f'[color={self.text_color_hex}]' +
@@ -283,7 +283,7 @@ class PyPassword(MDApp):
                 )
         result_dialog.open()
 
-    def _del_password_confirm(self, password):
+    def _del_password_confirm(self, password: str):
         del_password(password)
         result_dialog = SimpleDialog(
             title='Success!',
@@ -518,7 +518,8 @@ class PyPassword(MDApp):
         else:
             raise NameError('No theme found')
 
-    def open_url(self, url):
+    def open_url(self, url: str):
+        """Opens URL in default browser."""
         open_new_tab(url)
 
     def dismiss_and_back(self, instance, where='passwords'):
