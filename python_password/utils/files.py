@@ -6,6 +6,7 @@ class Files:
     """Names for program's files."""
     alpha_key = 'Alpha.key'
     beta_key = 'Beta.key'
+    settings = 'Settings.json'
     sqlite = 'Passwords.db'
 
 

@@ -20,6 +20,7 @@ from python_password.exceptions.validation import *
 from python_password.utils.crypto import *
 from python_password.utils.database import *
 from python_password.utils.files import *
+from python_password.utils.settings import *
 
 
 class SimpleDialog:
@@ -94,7 +95,7 @@ class PyPassword(MDApp):
     def on_start(self):
         self.update_passwords_list()
         self.masters_ok()
-        # self.switch_theme()
+        self.switch_theme(get_theme())
 
     # ================================
     #           Information
@@ -502,19 +503,28 @@ class PyPassword(MDApp):
     # ================================
 
     def switch_theme(self, force=None):
-        if force is not None:
-            self.theme_cls.theme_style = force
+        """
+        Changes theme to opposite or forced.
+        :param force: Which theme has to be applied.
+        :return: Nothing.
+        """
+        if force == 'Light':
+            current = 'Dark'
+        elif force == 'Dark':
+            current = 'Light'
+        else:
+            current = self.theme_cls.theme_style
 
-        elif self.theme_cls.theme_style == 'Light':
+        if current == 'Light':
             self.theme_cls.theme_style = 'Dark'
             self.text_color_hex = 'ffffff'
             self.text_color_rgba = (1, 1, 1, 1)
-
-        elif self.theme_cls.theme_style == 'Dark':
+            set_theme('Dark')
+        elif current == 'Dark':
             self.theme_cls.theme_style = 'Light'
             self.text_color_hex = '111111'
             self.text_color_rgba = (.06, .06, .06, 1)
-
+            set_theme('Light')
         else:
             raise NameError('No theme found')
 
