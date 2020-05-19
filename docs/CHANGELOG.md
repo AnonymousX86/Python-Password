@@ -1,6 +1,15 @@
 # Changelog
 
-This file contains changes made to `Python Password` program.
+This file contains changes made to **Python Password** program.
+
+## [0.2.4] - 2020-05-19
+### Added
+- Chosen theme is now saving.
+### Changed
+- Deleting passwords from context menu is forced.
+- Dialogs about invalid password input are more detailed.
+### Fixed
+- Bug #3: It was possible to save tab or other whitespaces as password alias of value.
 
 ## [0.2.3] - 2020-05-18
 ### Added
@@ -51,6 +60,7 @@ First usable pre-release.
 - Set password option.
 - Get password option.
 
+[0.2.4]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.4-alpha
 [0.2.3]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.3-alpha
 [0.2.2]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.2-alpha
 [0.2.1]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.1-alpha
