@@ -35,14 +35,14 @@ def query(q_input: str, q_args=None):
 
 def already_exists(alias: str):
     return True if len(query(
-        'SELECT `name` FROM passwords WHERE `name` LIKE ?;',
+        'SELECT `name` FROM `passwords` WHERE `name` LIKE ?;',
         [alias]
     )) > 0 else False
 
 
 def save_password(alias: str, value: bytes):
     query(
-        'INSERT INTO passwords (`name`, `password`) VALUES (?, ?);',
+        'INSERT INTO `passwords` (`name`, `password`) VALUES (?, ?);',
         [alias, value]
     )
 
