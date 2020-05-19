@@ -5,7 +5,7 @@ This file contains changes made to `Python Password` program.
 ## [0.2.3] - 2020-05-18
 ### Added
 - Dark theme. (optional)
-## Fixed
+### Fixed
 - Rewrote most methods to increase stability.
 
 ## [0.2.2] - 2020-05-16
