@@ -2,7 +2,7 @@
 
 ![Code correctness](https://github.com/AnonymousX86/Python-Password/workflows/Code%20correctness/badge.svg)
 
-**This project is about my first desktop app - password manager. It's made with Python 3.7 and material design standard.**
+**This project is my first desktop app - password manager. It's made with Python 3.7 and material design standard.**
 
 ### What's the program about?
 
