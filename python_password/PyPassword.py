@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Simple password manager app."""
 from os import urandom
+from re import match
 from webbrowser import open_new_tab
 
 from cryptography.fernet import InvalidToken
@@ -15,6 +16,7 @@ from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import OneLineListItem, ThreeLineIconListItem
 from pyperclip import copy
 
+from python_password.exceptions.validation import *
 from python_password.utils.crypto import *
 from python_password.utils.database import *
 from python_password.utils.files import *
@@ -166,10 +168,15 @@ class PyPassword(MDApp):
         if self.masters_ok():
             ok_alias = self.validate_input(alias_box, 3)
             ok_value = self.validate_input(value_box, 6)
-            if not (ok_alias and ok_value):
+            if ok_alias is ValueTooShort or ok_value is ValueTooShort:
                 result_dialog = SimpleDialog(
                     title='Whoops!',
-                    text='The entered values are too short or invalid.'
+                    text='At least one value is too short.'
+                ).alert()
+            elif ok_alias is PatternError or ok_value is PatternError:
+                result_dialog = SimpleDialog(
+                    title='Whoops!',
+                    text='At last one value is invalid.'
                 ).alert()
             else:
                 password_alias = alias_box.text.capitalize()
@@ -177,7 +184,7 @@ class PyPassword(MDApp):
                 if already_exists(password_alias):
                     result_dialog = SimpleDialog(
                         title='Whoops!',
-                        text='That password already exists or not all settings are set.'
+                        text='That password already exists.'
                     ).alert()
                 else:
                     save_password(
@@ -518,14 +525,21 @@ class PyPassword(MDApp):
         self.root.ids.screen_manager.current = where
         instance.dismiss()
 
-    def validate_input(self, instance, length):
+    def validate_input(self, instance, length: int):
         """
         Checks text input.
         :param instance: Which widget has to be checked.
         :param length: Minimum length of provided text.
         """
-        instance.error = True if len(instance.text) < length else False
-        return not instance.error
+        if len(instance.text) < length:
+            instance.error = True
+            return ValueTooShort
+        elif match('^[A-Za-z0-9][A-Za-z0-9 &\\-_]+[A-Za-z0-9]$', instance.text) is None:
+            instance.error = True
+            return PatternError
+        else:
+            instance.error = False
+            return True
 
 
 if __name__ == '__main__':
