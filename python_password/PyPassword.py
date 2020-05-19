@@ -117,7 +117,7 @@ class PyPassword(MDApp):
                     icon='trash-can-outline',
                     text='Delete',
                     on_release=lambda x: [
-                        self.del_password(instance.text),
+                        self.del_password(instance.text, True),
                         ctx_dialog.dismiss()
                     ]
                 ),
@@ -227,16 +227,16 @@ class PyPassword(MDApp):
         result_dialog.open()
         self.update_passwords_list()
 
-    def del_password(self, password=None):
+    def del_password(self, password=None, force=False):
         if password is None:
             password = self.root.ids.del_password_alias.text.capitalize()
         self.root.ids.del_password_alias.text = ''
-        if len(password) == 0:
+        if not force and len(password) == 0:
             result_dialog = SimpleDialog(
                 title='Whoops!',
                 text='Please provide password alias at first.'
             ).alert()
-        elif len(password) < 3:
+        elif not force and len(password) < 3:
             result_dialog = SimpleDialog(
                 title='Whoops!',
                 text='Password alias has to be at least 3 characters long.'
