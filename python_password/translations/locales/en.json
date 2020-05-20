@@ -14,6 +14,7 @@
   "password_count_0": "There are no passwords in database.",
   "passwords_count_1": "There's only 1 password in database.",
   "passwords_count_x": "There are {0} passwords in database.",
+  "refresh": "Refresh",
   "change_master": "Change {0} password",
   "new_master": "New {0} password",
   "save": "Save",
@@ -58,10 +59,11 @@
   "error_already_exists": "That password already exists in database.",
   "error_not_exists": "That password do not exists in database.",
   "error_missing_master_title": "Missing {0} password",
-  "error_missing_master_text": "Missing {0} password. It's needed for safe password storing. Do you want to provide it by yourself, or let program to randomize it?",
+  "error_missing_master_text": "It's needed for safe password storing. Do you want to provide it by yourself, or let program to randomize it?",
   "error_master_too_short": "{0} password should be at least {1} characters long.",
   "error_input_too_short": "At least one value is too short.",
   "error_input_invalid": "At last one value is invalid.",
+  "error_locale_missing": "This language is not found, do you want to download it?",
   "error_unknown": "An error has occurred: {0}",
   "set_password": "Set password",
   "randomize": "Randomize",
@@ -70,5 +72,6 @@
   "tip_1_text_2": "it's data on the right.",
   "tip_2_title": "Congratulations!",
   "tip_2_text_1": "You have saved your's 1st password.",
-  "tip_2_text_2": "Preview it just by clicking it."
+  "tip_2_text_2": "Preview it just by clicking it.",
+  "restart_required": "To save changes, please restart app."
 }
