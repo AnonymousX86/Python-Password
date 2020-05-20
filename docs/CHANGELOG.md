@@ -2,6 +2,16 @@
 
 This file contains changes made to **Python Password** program.
 
+## [0.2.5] - 2020-05-XX
+### Added
+- Translation option.
+- Polish locale.
+- Safer theme changing.
+### Changed
+- New icon.
+### Fixed
+- Two tries to access settings.
+
 ## [0.2.4] - 2020-05-19
 ### Added
 - Chosen theme is now saving.
@@ -60,6 +70,7 @@ First usable pre-release.
 - Set password option.
 - Get password option.
 
+[0.2.5]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.5-alpha
 [0.2.4]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.4-alpha
 [0.2.3]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.3-alpha
 [0.2.2]: https://github.com/AnonymousX86/Python-Password/releases/tag/v0.2.2-alpha

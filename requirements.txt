@@ -2,3 +2,4 @@ pyperclip~=1.8.0
 kivy~=1.11.1
 kivymd~=0.104.1
 cryptography~=2.9.2
+requests~=2.23.0

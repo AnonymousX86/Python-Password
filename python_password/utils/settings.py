@@ -5,7 +5,10 @@ from python_password.utils.files import appdata, Files
 
 
 default_settings = {
-    'theme': 'Light'
+    'theme': 'Light',
+    'text_color_hex': '111111',
+    'text_color_rgba': [.06, .06, .06, 1],
+    'language': 'en'
 }
 
 
@@ -36,7 +39,7 @@ def set_setting(name: str, value):
         dump(settings, f)
 
 
-def get_setting(name: str):
+def get_setting(name: str, second_try=False):
     try:
         open(appdata(Files.settings))
     except FileNotFoundError:
@@ -46,14 +49,26 @@ def get_setting(name: str):
             settings = load(f)
     try:
         result = settings[name]
-    except IndexError:
-        return IndexError('Missing setting')
+    except KeyError:
+        if not second_try:
+            reset_settings()
+            return get_setting(name, second_try=True)
+        else:
+            return KeyError('Missing setting')
     else:
         return result
 
 
 def set_theme(theme: str):
     set_setting('theme', theme)
+    if theme == 'Dark':
+        set_setting('text_color_hex', 'ffffff')
+        set_setting('text_color_rgba', [1, 1, 1, 1])
+    elif theme == 'Light':
+        set_setting('text_color_hex', '111111')
+        set_setting('text_color_rgba', [.06, .06, .06, 1])
+    else:
+        raise NameError('No theme found')
 
 
 def get_theme():
