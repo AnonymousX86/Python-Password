@@ -1,14 +1,11 @@
 # Security Policy
 
 ## Supported Versions
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.1.*   | :x:                |
-| 0.2.0   | :x:                |
-| 0.2.1   | :white_check_mark: |
-| 0.2.2   | :white_check_mark: |
-| 0.2.3   | :x:                |
-| 0.2.4   | :white_check_mark: |
+| Version  | Supported          |
+| -------- | ------------------ |
+| <0.2.3   | :x:                |
+| 0.2.4    | :white_check_mark: |
+| 0.2.5    | :white_check_mark: |
 
 ## Supported operating systems
 For now Python Password is tested only for Windows. Program could be unstable on Linux or OS X.
