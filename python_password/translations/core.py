@@ -93,7 +93,10 @@ default_messages = {
     "tip_2_title": "Congratulations!",
     "tip_2_text_1": "You have saved your's 1st password.",
     "tip_2_text_2": "Preview it just by clicking it.",
-    "restart_required": "To save changes, please restart app."
+    "restart_required": "To save changes, please restart app.",
+    "login": "Login",
+    "password": "Password",
+    "log_in": "Log in"
 }
 default_language = default_messages['__info__']['language']
 compatible_version = default_messages['__info__']['compatible_version']
