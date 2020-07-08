@@ -584,11 +584,7 @@ class PyPassword(MDApp):
         self.theme_cls.theme_style = get_setting('theme')
 
     def switch_theme(self, force=None):
-        """
-        Changes theme to opposite or forced.
-        :param force: Which theme has to be applied.
-        :return: Nothing.
-        """
+        """Changes theme to opposite or forced."""
         if force == 'Light':
             current = 'Dark'
         elif force == 'Dark':
@@ -624,11 +620,6 @@ class PyPassword(MDApp):
         instance.dismiss()
 
     def validate_input(self, instance, length: int):
-        """
-        Checks text input.
-        :param instance: Which widget has to be checked.
-        :param length: Minimum length of provided text.
-        """
         if len(instance.text) < length:
             instance.error = True
             return ValueTooShort
