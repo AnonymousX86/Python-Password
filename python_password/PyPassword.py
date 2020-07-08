@@ -105,8 +105,6 @@ class PyPassword(MDApp):
         self.masters_ok()
         self.switch_theme(get_theme())
         self.update_languages_list()
-        # Development option
-        # self.root.ids.screen_manager.current = 'languages'
 
     # ================================
     #           Information
