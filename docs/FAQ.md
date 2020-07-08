@@ -10,7 +10,7 @@ local app data directory (default is `C:\Users\YOUR_USERNAME\AppData\Local`).
 
 ## How passwords are saved?
 
-All password are stored in local SQLite database. ([What's SQLite?][sqlite]</sup>) Before program saves them, they're
+All password are stored in local SQLite database. ([What's SQLite?][sqlite]) Before program saves them, they're
 being encrypted with alpha password, which is encrypted with beta password.
 
 
@@ -28,6 +28,11 @@ encrypted with another combination of alpha and beta passwords.
 
 Only those who are using program, on your's computer profile. Different users on the same PC will have separate settings
 and saved data.
+
+
+## My antivirus shows that Python Password is a virus
+
+It's alright. This program isn't popular, so it's "unsafe" for default. But you have my word - it's not a virus.
 
 
 ## Program is acting weird, what can I do?
@@ -52,7 +57,7 @@ You can invite me via Discord, my nick is `Anonymous©#7296` or [send me an emai
 
 You have two options:
 - Open new issue [here][issues].
-- Write to me.
+- Write to me, [here][mail].
 
 
 [sqlite]: <https://www.sqlite.org/index.html>
