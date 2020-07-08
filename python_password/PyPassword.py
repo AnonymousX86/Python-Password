@@ -457,18 +457,6 @@ class PyPassword(MDApp):
         confirm_dialog.open()
 
     # ================================
-    #              Backup
-    # ================================
-
-    def backup_export(self):
-        self.wip_info()
-        # TODO - Making a backup
-
-    def backup_import(self):
-        self.wip_info()
-        # TODO - importing a backup
-
-    # ================================
     #            Passwords
     # ================================
 
