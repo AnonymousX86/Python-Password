@@ -70,7 +70,7 @@ For download please look at [latest release](https://github.com/AnonymousX86/Pyt
 | Idea | Added in version |
 | ---- | ---------------- |
 | Theme changing. | v0.2.3 |
-| Many translations. | - |
+| Many translations. | v0.2.5 |
 | Exporting and importing backups. | - |
 | Clear cache 15 seconds after copy password. | - |
 | Login system. | - |
