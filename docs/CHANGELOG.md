@@ -13,13 +13,12 @@ This file contains changes made to **Python Password** program.
 - Two tries to access settings.
 
 ## [0.2.4] - 2020-05-19
-### Added
-- Chosen theme is now saving.
 ### Changed
 - Deleting passwords from context menu is forced.
 - Dialogs about invalid password input are more detailed.
 ### Fixed
 - Bug #3: It was possible to save tab or other whitespaces as password alias of value.
+- Chosen theme is now saving.
 
 ## [0.2.3] - 2020-05-18
 ### Added
