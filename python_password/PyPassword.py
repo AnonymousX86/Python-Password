@@ -94,6 +94,11 @@ class PyPassword(MDApp):
     # It has to be outside ``__init__``
     text_color_rgba = ListProperty(get_setting('text_color_rgba'))
 
+    _confirm_alpha = None
+
+    def set_confirm(self, confirm):
+        self._confirm_alpha = confirm
+
     def build(self):
         self.update_messages()
         with open(f'kv_templates{sep}PyPassword.kv', encoding='utf8') as fd:
@@ -105,12 +110,164 @@ class PyPassword(MDApp):
         self.masters_ok()
         self.switch_theme(get_theme())
         self.update_languages_list()
+        # self.root.ids.screen_manager.current = 'settings'
+
+    def _change_screen(self, name: str):
+        self.root.ids.screen_manager.current = name
+
+    # ================================
+    #            Binding
+    # ================================
+
+    def bind__cs__passwords(self):
+        self._change_screen('passwords')
+
+    def bind__on_enter__passwords(self):
+        self.update_passwords_list()
+        self.masters_ok()
+
+    def bind__cs__settings(self):
+        self._change_screen('settings')
+
+    def bind__cs__info(self):
+        self._change_screen('info')
+
+    def bind__cs__languages(self):
+        self._change_screen('languages')
+
+    def bind__change_theme(self):
+        self.switch_theme()
+
+    def bind__enter__passwords(self):
+        self.update_passwords_list()
+        self.masters_ok()
+
+    def bind__tv__passwords_alias(self, field):
+        self.validate_input(field, 3)
+
+    def bind__tv__passwords_value(self, field):
+        self.validate_input(field, 6)
+
+    def bind__press__add_password(self):
+        self.add_password()
+
+    def bind__tv__del_del_password_alias(self, field):
+        self.validate_input(field, 3)
+
+    def bind__release__del_password(self):
+        self.del_password()
+
+    def bind__release__refresh(self):
+        self.update_passwords_list()
+
+    def bind__tv__alpha_change(self):
+        self._verify_dialog().open()
+
+    def bind__release__alpha_change(self):
+        self.change_master(which='alpha')
+
+    def bind__release__alpha_reset(self):
+        self.reset_alpha()
+
+    def bind__tv__beta_change(self):
+        self.change_master('beta')
+
+    def bind__release__beta_change(self):
+        self.change_master('beta')
+
+    def bind__release__beta_reset(self):
+        self.change_master('beta')
+
+    def bind__di__name(self):
+        self.detailed_info('name')
+
+    def bind__di__version(self):
+        self.detailed_info('version')
+
+    def bind__di__author(self):
+        self.detailed_info('author')
+
+    def bind__di__icon(self):
+        self.detailed_info('icon')
+
+    def bind__di__3rd_party(self):
+        self.detailed_info('3rd_party')
+
+    def bind__open__github(self):
+        self.open_url(self.info['github'])
+
+    def bind__open__faq(self):
+        self.open_url(self.info['faq'])
+
+    def bind__open__mail(self):
+        self.open_url(self.info['mail'])
+
+    def bind__add_language(self):
+        self.add_language()
+
+    # ================================
+    #            Verifying
+    # ================================
+
+    def _verify_dialog(self):
+        content_cls = BoxLayout()
+        content_cls.add_widget(
+            MDTextField(
+                hint_text=self.tr('alpha').capitalize() + ' ' + self.tr('password').lower()
+            )
+        )
+        alert_dialog = MDDialog(
+            title=self.tr('confirm_alpha'),
+            type='custom',
+            auto_dismiss=False,
+            content_cls=content_cls,
+            buttons=[
+                MDFillRoundFlatIconButton(
+                    text=self.tr('ok'),
+                    on_release=lambda x: [
+                        alert_dialog.dismiss(),
+                        self.set_confirm(alert_dialog.content_cls.children[0].text),
+                        self._confirm_done()
+                    ]
+                ),
+                MDRoundFlatIconButton(
+                    text=self.tr('cancel'),
+                    on_release=lambda x: [
+                        alert_dialog.dismiss()
+                    ]
+                )
+            ]
+        )
+        return alert_dialog
+
+    def _confirm_done(self):
+        c = self._confirm_alpha
+        if check_alpha(c.encode()):
+            d = MDDialog(
+                title=self.tr('success'),
+                text=self.tr('alfa_match'),
+                auto_dismiss=False,
+                buttons=[
+                    MDRaisedButton(
+                        text=self.tr('ok'),
+                        on_release=lambda x: d.dismiss()
+                    )
+                ]
+            )
+        else:
+            d = MDDialog(
+                title=self.tr('whoops'),
+                text=self.tr('alfa_not_match')
+            )
+
+    def verify__copy(self):
+        self._verify_dialog().open()
 
     # ================================
     #           Information
     # ================================
 
-    def ctx_password(self, instance):
+    def _ctx_password(self, instance):
         """Shows dialog with options what to do with password."""
         ctx_dialog = MDDialog(
             title=f'[color=#{self.text_color_hex}]{instance.text.capitalize()}[/color]',
@@ -156,7 +313,7 @@ class PyPassword(MDApp):
                     on_release=lambda x:
                     self.open_url('https://www.freepik.com/')
                 ) if name == 'icon' else None
-                ]
+            ]
         )
         info_dialog.open()
 
@@ -462,6 +619,9 @@ class PyPassword(MDApp):
     #            Passwords
     # ================================
 
+    def verify_alpha(self):
+        return check_alpha()
+
     def _fetch_passwords(self):
         q = gel_all_passwords()
         passwords = [p[0] for p in q] if q is not None else []
@@ -473,7 +633,7 @@ class PyPassword(MDApp):
             self.root.ids.passwords_list.add_widget(
                 OneLineListItem(
                     text=password,
-                    on_release=lambda x: self.ctx_password(x)
+                    on_release=lambda x: self._ctx_password(x)
                 )
             )
 
