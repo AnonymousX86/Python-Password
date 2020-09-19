@@ -44,6 +44,19 @@ def generate_alpha(preset: bytes):
         f.write(urlsafe_b64encode(kdf.derive(preset)))
 
 
+def check_alpha(password: bytes):
+    with open(appdata(Files.beta_key), 'rb') as f:
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=f.read(),
+            iterations=100000,
+            backend=default_backend()
+        )
+    with open(appdata(Files.alpha_key), 'rb') as f:
+        return urlsafe_b64encode(kdf.derive(password)) == f.read()
+
+
 def generate_beta(preset: bytes):
     """Generates Beta.key file (salt)."""
     create_in_appdata(Files.beta_key)

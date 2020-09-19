@@ -529,42 +529,43 @@ class PyPassword(MDApp):
             return True
 
     def change_master(self, which: str, preset=None):
-        which = which.lower()
-        if which == 'alpha':
-            password_box = self.root.ids.alpha_change
-            generate_func = generate_alpha
-        elif which == 'beta':
-            password_box = self.root.ids.beta_change
-            generate_func = generate_beta
-        else:
-            raise NameError(f'{which.capitalize()} password do not exists')
+        if self.verify_alpha():
+            which = which.lower()
+            if which == 'alpha':
+                password_box = self.root.ids.alpha_change
+                generate_func = generate_alpha
+            elif which == 'beta':
+                password_box = self.root.ids.beta_change
+                generate_func = generate_beta
+            else:
+                raise NameError(f'{which.capitalize()} password do not exists')
 
-        password = password_box.text.encode('utf-8') if preset is None else preset
+            password = password_box.text.encode('utf-8') if not preset else preset
 
-        if len(password) < 6:
-            password_box.error = True
-            result_dialog = SimpleDialog(
-                title=self.tr('whoops'),
-                text=self.tr('error_master_too_short', txt_format=[self.tr(which), '6']),
-                alert_text=self.tr('ok')
-            ).alert()
-        else:
-            password_box.error = False
-            generate_func(password)
-            result_dialog = MDDialog(
-                title=self.tr('success'),
-                text=self.tr('success_new_master', txt_format=self.tr(which)),
-                auto_dismiss=False,
-                buttons=[
-                    MDRaisedButton(
-                        text=self.tr('ok'),
-                        on_release=lambda x: self.dismiss_and_back(result_dialog)
-                    )
-                ]
-            )
+            if len(password) < 6:
+                password_box.error = True
+                result_dialog = SimpleDialog(
+                    title=self.tr('whoops'),
+                    text=self.tr('error_master_too_short', txt_format=[self.tr(which), '6']),
+                    alert_text=self.tr('ok')
+                ).alert()
+            else:
+                password_box.error = False
+                generate_func(password)
+                result_dialog = MDDialog(
+                    title=self.tr('success'),
+                    text=self.tr('success_new_master', txt_format=self.tr(which)),
+                    auto_dismiss=False,
+                    buttons=[
+                        MDRaisedButton(
+                            text=self.tr('ok'),
+                            on_release=lambda x: self.dismiss_and_back(result_dialog)
+                        )
+                    ]
+                )
 
-        password_box.text = ''
-        result_dialog.open()
+            password_box.text = ''
+            result_dialog.open()
 
     def reset_alpha(self):
         confirm_dialog = MDDialog(
@@ -621,8 +622,7 @@ class PyPassword(MDApp):
 
     def _fetch_passwords(self):
         q = gel_all_passwords()
-        passwords = [p[0] for p in q] if q is not None else []
-        self.passwords = passwords
+        self.passwords = [p[0] for p in q] if q else []
 
     def _set_passwords_list(self):
         self.root.ids.passwords_list.clear_widgets()
