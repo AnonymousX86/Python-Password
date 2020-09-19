@@ -5,8 +5,8 @@ from pathlib import Path
 
 from requests import get
 
-from utils.files import appdata
-from utils.settings import set_setting
+from python_password.utils.files import appdata
+from python_password.utils.settings import set_setting
 
 
 default_messages = {

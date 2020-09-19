@@ -14,6 +14,7 @@ from kivymd.uix.button import MDRectangleFlatIconButton, MDRaisedButton, MDFillR
     MDRoundFlatIconButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import OneLineListItem, ThreeLineIconListItem
+from kivymd.uix.textfield import MDTextField
 from pyperclip import copy
 
 from python_password.exceptions.validation import *
@@ -21,7 +22,7 @@ from python_password.utils.crypto import *
 from python_password.utils.database import *
 from python_password.utils.files import *
 from python_password.utils.settings import *
-from translations.core import *
+from python_password.translations.core import *
 
 
 class SimpleDialog:
