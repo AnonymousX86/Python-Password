@@ -330,8 +330,6 @@ class PyPassword(MDApp):
     #        Passwords managing
     # ================================
 
-    # TODO - Alfa password should be entered before copying or removing password.
-
     def add_password(self):
         alias_box = self.root.ids.password_alias
         value_box = self.root.ids.password_value
@@ -529,8 +527,6 @@ class PyPassword(MDApp):
             return False
         else:
             return True
-
-    # TODO - Alfa password should be entered before changing master password.
 
     def change_master(self, which: str, preset=None):
         which = which.lower()

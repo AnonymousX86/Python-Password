@@ -21,7 +21,6 @@ def query(q_input: str, q_args=None):
     :param q_args: Query arguments (replaces ``?`` symbols in query).
     :return: All records or ``None`` if nothing is matching query.
     """
-    # TODO - Include SQLAlchemy
     if q_args is None:
         q_args = []
     create_in_appdata(Files.sqlite)
