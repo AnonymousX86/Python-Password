@@ -96,7 +96,9 @@ default_messages = {
     "restart_required": "To save changes, please restart app.",
     "login": "Login",
     "password": "Password",
-    "log_in": "Log in"
+    "log_in": "Log in",
+    "confirm_alpha": "Alpha password has to be confirmed.",
+    "cancel": "Cancel"
 }
 default_language = default_messages['__info__']['language']
 compatible_version = default_messages['__info__']['compatible_version']
