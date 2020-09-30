@@ -10,7 +10,9 @@ Python Password is intended to safely store passwords. They are encrypted with t
 Master passwords could be randomly generated or set by user, so you can re-create them when they're gone for some reasons
 or you'd like to share your passwords with someone. Of course many users on the same PC will have separate data folders.
 When you would like to get any password it won't be prompted on the screen, but safely copied to clipboard with no risk
-that someone could view your password.
+that someone could view your password.As you know that youre password save on system ,so we give an option to configure and
+logint to youre account directly from this app you just have to give auto login permistion to your account you can disable this 
+featers from setting.there is also a option for dark theam.
 
 ![Passwords menu](https://github.com/AnonymousX86/Python-Password/blob/master/docs/screenshots/Passwords%20menu.png)
 
@@ -27,7 +29,7 @@ Main screen of program is passwords menu. From here you can:
 - delete passwords.
 
 On the left side there will be displayed list of saved passwords. You can click on specific password to see context
-menu wth 3 options; "copy", "delete" and "nothing".
+menu wth  3 options; "copy", "delete" and "nothing".
 
 On the right side there are 4 sections.
 
@@ -42,7 +44,9 @@ On the right side there are 4 sections.
 In this menu, you can:
 
 - change alpha password,
-- change beta password.
+- change beta password,
+- change theams,
+- check for updates
 
 You can see in
 [`FAQ.md`](https://github.com/AnonymousX86/Python-Password/blob/master/docs/FAQ.md#what-are-alpha-and-beta-passwords)
