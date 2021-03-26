@@ -243,7 +243,7 @@ class PyPassword(MDApp):
 
     def _confirm_done(self):
         c = self._confirm_alpha
-        if check_alpha(c.encode()):
+        if check_alpha():
             d = MDDialog(
                 title=self.tr('success'),
                 text=self.tr('alfa_match'),
