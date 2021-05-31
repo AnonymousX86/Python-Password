@@ -2,6 +2,7 @@
 """Simple password manager app."""
 from os import urandom
 from re import match
+from sqlite3 import OperationalError
 from webbrowser import open_new_tab
 
 from cryptography.fernet import InvalidToken
@@ -690,7 +691,12 @@ class PyPassword(MDApp):
         self.root.ids.passwords_count.text = text
 
     def update_passwords_list(self):
-        self._fetch_passwords()
+        try:
+            self._fetch_passwords()
+        except OperationalError:
+            generate_sqlite()
+        finally:
+            self._fetch_passwords()
         self._set_passwords_list()
         self._set_passwords_count()
 
