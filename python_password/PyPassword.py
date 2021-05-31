@@ -10,19 +10,19 @@ from kivy.lang import Builder
 from kivy.properties import ObjectProperty, StringProperty, ListProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.app import MDApp
-from kivymd.uix.button import MDRectangleFlatIconButton, MDRaisedButton, MDFillRoundFlatIconButton, \
-    MDRoundFlatIconButton
+from kivymd.uix.button import MDRectangleFlatIconButton, MDRaisedButton, \
+    MDFillRoundFlatIconButton, MDRoundFlatIconButton
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.list import OneLineListItem, ThreeLineIconListItem
 from kivymd.uix.textfield import MDTextField
 from pyperclip import copy
 
 from python_password.exceptions.validation import *
+from python_password.translations.core import *
 from python_password.utils.crypto import *
 from python_password.utils.database import *
 from python_password.utils.files import *
 from python_password.utils.settings import *
-from python_password.translations.core import *
 
 
 class SimpleDialog:
@@ -80,7 +80,8 @@ class PyPassword(MDApp):
             'version': '0.2.5',
             'author': 'Jakub Suchenek',
             'github': 'https://github.com/AnonymousX86/Python-Password',
-            'faq': 'https://github.com/AnonymousX86/Python-Password/blob/master/docs/FAQ.md',
+            'faq': 'https://github.com/AnonymousX86/Python-Password/blob/master'
+                   '/docs/FAQ.md',
             'mail': 'mailto:jakub.suchenek.25@gmail.com',
             'icon': 'Icon made by Freepik from www.flaticon.com',
             '3rd_party': 'UPX, Kivy and KivyMD'
@@ -212,11 +213,13 @@ class PyPassword(MDApp):
 
     def _verify_dialog(self):
         content_cls = BoxLayout()
-        content_cls.add_widget(
-            MDTextField(
-                hint_text=self.tr('alpha').capitalize() + ' ' + self.tr('password').lower()
-            )
-        )
+        content_cls.add_widget(MDTextField(
+            hint_text=self.tr(
+                'alpha'
+            ).capitalize() + ' ' + self.tr(
+                'password'
+            ).lower()
+        ))
         alert_dialog = MDDialog(
             title=self.tr('confirm_alpha'),
             type='custom',
@@ -227,7 +230,9 @@ class PyPassword(MDApp):
                     text=self.tr('ok'),
                     on_release=lambda x: [
                         alert_dialog.dismiss(),
-                        self.set_confirm(alert_dialog.content_cls.children[0].text),
+                        self.set_confirm(
+                            alert_dialog.content_cls.children[0].text
+                        ),
                         self._confirm_done()
                     ]
                 ),
@@ -242,7 +247,6 @@ class PyPassword(MDApp):
         return alert_dialog
 
     def _confirm_done(self):
-        c = self._confirm_alpha
         if check_alpha():
             d = MDDialog(
                 title=self.tr('success'),
@@ -271,7 +275,8 @@ class PyPassword(MDApp):
     def _ctx_password(self, instance):
         """Shows dialog with options what to do with password."""
         ctx_dialog = MDDialog(
-            title=f'[color=#{self.text_color_hex}]{instance.text.capitalize()}[/color]',
+            title=f'[color=#{self.text_color_hex}]{instance.text.capitalize()}'
+                  f'[/color]',
             text=self.tr('ctx_text'),
             auto_dismiss=False,
             buttons=[
@@ -308,7 +313,8 @@ class PyPassword(MDApp):
             auto_dismiss=False,
             buttons=[
                 MDRaisedButton(
-                    text='OK', on_release=lambda x: info_dialog.dismiss()),
+                    text='OK', on_release=lambda x: info_dialog.dismiss()
+                ),
                 MDRectangleFlatIconButton(
                     text='Freepik', icon='web',
                     on_release=lambda x:
@@ -457,7 +463,9 @@ class PyPassword(MDApp):
                         MDRoundFlatIconButton(
                             text=self.tr('no'),
                             icon='close-circle-outline',
-                            on_release=lambda x: self.dismiss_and_back(result_dialog)
+                            on_release=lambda x: self.dismiss_and_back(
+                                result_dialog
+                            )
                         )
                     ]
                 )
@@ -481,14 +489,20 @@ class PyPassword(MDApp):
         """Checks if master passwords are OK."""
         if not check_beta():
             alert_dialog = MDDialog(
-                title=self.tr('error_missing_master_title', txt_format=self.tr('beta')),
+                title=self.tr(
+                    'error_missing_master_title',
+                    txt_format=self.tr('beta')
+                ),
                 text=self.tr('error_missing_master_text'),
                 auto_dismiss=False,
                 buttons=[
                     MDFillRoundFlatIconButton(
                         text=self.tr('set_password'),
                         icon='account-key-outline',
-                        on_release=lambda x: self.dismiss_and_back(alert_dialog, 'settings')
+                        on_release=lambda x: self.dismiss_and_back(
+                            alert_dialog,
+                            'settings'
+                        )
                     ),
                     MDRoundFlatIconButton(
                         text=self.tr('randomize'),
@@ -504,14 +518,20 @@ class PyPassword(MDApp):
             return False
         elif not check_alpha():
             alert_dialog = MDDialog(
-                title=self.tr('error_missing_master_title', txt_format=self.tr('alpha')),
+                title=self.tr(
+                    'error_missing_master_title',
+                    txt_format=self.tr('alpha')
+                ),
                 text=self.tr('error_missing_master_text'),
                 auto_dismiss=False,
                 buttons=[
                     MDFillRoundFlatIconButton(
                         text=self.tr('set_password'),
                         icon='account-key-outline',
-                        on_release=lambda x: self.dismiss_and_back(alert_dialog, 'settings')
+                        on_release=lambda x: self.dismiss_and_back(
+                            alert_dialog,
+                            'settings'
+                        )
                     ),
                     MDRoundFlatIconButton(
                         text=self.tr('randomize'),
@@ -540,13 +560,18 @@ class PyPassword(MDApp):
             else:
                 raise NameError(f'{which.capitalize()} password do not exists')
 
-            password = password_box.text.encode('utf-8') if not preset else preset
+            password = password_box.text.encode(
+                'utf-8'
+            ) if not preset else preset
 
             if len(password) < 6:
                 password_box.error = True
                 result_dialog = SimpleDialog(
                     title=self.tr('whoops'),
-                    text=self.tr('error_master_too_short', txt_format=[self.tr(which), '6']),
+                    text=self.tr(
+                        'error_master_too_short',
+                        txt_format=[self.tr(which), '6']
+                    ),
                     alert_text=self.tr('ok')
                 ).alert()
             else:
@@ -554,14 +579,17 @@ class PyPassword(MDApp):
                 generate_func(password)
                 result_dialog = MDDialog(
                     title=self.tr('success'),
-                    text=self.tr('success_new_master', txt_format=self.tr(which)),
+                    text=self.tr(
+                        'success_new_master',
+                        txt_format=self.tr(which)
+                    ),
                     auto_dismiss=False,
-                    buttons=[
-                        MDRaisedButton(
+                    buttons=[MDRaisedButton(
                             text=self.tr('ok'),
-                            on_release=lambda x: self.dismiss_and_back(result_dialog)
-                        )
-                    ]
+                            on_release=lambda x: self.dismiss_and_back(
+                                result_dialog
+                            )
+                        )]
                 )
 
             password_box.text = ''
@@ -617,6 +645,7 @@ class PyPassword(MDApp):
     #            Passwords
     # ================================
 
+    # noinspection PyMethodMayBeStatic
     def verify_alpha(self):
         return check_alpha()
 
@@ -676,7 +705,8 @@ class PyPassword(MDApp):
                 OneLineListItem(
                     text=self.all_languages[lang],
                     on_release=lambda x: self.change_language(
-                        list(self.all_languages.keys())[list(self.all_languages.values()).index(x.text)]
+                        list(self.all_languages.keys())[
+                            list(self.all_languages.values()).index(x.text)]
                     )
                 )
             )
@@ -716,7 +746,8 @@ class PyPassword(MDApp):
 
     def add_language(self):
         self.open_url(
-            'https://github.com/AnonymousX86/Python-Password/blob/master/docs/CONTRIBUTING.md#adding-new-locales'
+            'https://github.com/AnonymousX86/Python-Password/blob/master/docs/'
+            'CONTRIBUTING.md#adding-new-locales'
         )
 
     def tr(self, text_id, txt_format=None, is_title=False):
@@ -770,6 +801,7 @@ class PyPassword(MDApp):
         ).alert()
         result_dialog.open()
 
+    # noinspection PyMethodMayBeStatic
     def open_url(self, url: str):
         """Opens URL in default browser."""
         open_new_tab(url)
@@ -778,12 +810,14 @@ class PyPassword(MDApp):
         self.root.ids.screen_manager.current = where
         instance.dismiss()
 
+    # noinspection PyMethodMayBeStatic
     def validate_input(self, instance, length: int):
         if len(instance.text) < length:
             instance.error = True
             return ValueTooShort
         elif match(
-                '^[A-Za-zĘÓĄŚŁŻŹĆŃęóąśłżźćń0-9][A-Za-z0-9ĘÓĄŚŁŻŹĆŃęóąśłżźćń &\\-_]+[A-Za-z0-9ĘÓĄŚŁŻŹĆŃęóąśłżźćń]$',
+                '^[A-Za-zĘÓĄŚŁŻŹĆŃęóąśłżźćń0-9][A-Za-z0-9ĘÓĄŚŁŻŹĆŃęóąśłżźćń'
+                ' &\\-_]+[A-Za-z0-9ĘÓĄŚŁŻŹĆŃęóąśłżźćń]$',
                 instance.text
         ) is None:
             instance.error = True
@@ -794,7 +828,7 @@ class PyPassword(MDApp):
 
 
 if __name__ == '__main__':
-    kivy_require('1.11.1')
+    kivy_require('2.0.0')
 
     Config.set('kivy', 'desktop', 1)
     Config.set('kivy', 'exit_on_esc', 0)

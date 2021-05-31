@@ -7,8 +7,8 @@ from python_password.utils.files import appdata, Files, create_in_appdata
 def generate_sqlite():
     create_in_appdata(Files.sqlite)
     for q in [
-        '''create table passwords(id INTEGER constraint passwords_pk primary key autoincrement, name varchar not null,
-        password varchar not null );''',
+        '''create table passwords(id INTEGER constraint passwords_pk primary key
+         autoincrement, name varchar not null, password varchar not null );''',
         'create unique index passwords_name_uindex on passwords (name);'
     ]:
         query(q)
