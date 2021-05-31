@@ -4,6 +4,7 @@ __pycache__
 
 # IDE folder
 .idea
+Python_Password.egg-info
 
 # Virtual env
 venv
