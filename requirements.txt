@@ -1,5 +1,5 @@
-pyperclip~=1.8.0
-kivy~=1.11.1
-kivymd~=0.104.1
-cryptography~=3.1
-requests~=2.24.0
+pyperclip>=1.8.2
+kivy>=2.0.0
+kivymd>=0.104.1
+cryptography>=3.1
+requests>=2.25.1
